@@ -1,0 +1,17 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "files.eol": "\n",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always",
+    "source.fixAll.stylelint": "always",
+    "source.organizeImports": "always"
+  },
+  "css.validate": true,
+  "files.trimTrailingWhitespace": true,
+  "editor.insertSpaces": false,
+  "editor.tabSize": 2,
+  "eslint.validate": ["javascript", "typescript"],
+  "prettier.enable": false,
+  "git.autofetch": true
+}
