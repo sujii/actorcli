@@ -23,7 +23,7 @@ const ENV_VALIDATION_RULES: EnvValidationRule[] = [
   {
     key: 'API_KEY',
     required: true,
-    pattern: /^[A-Za-z0-9-_]{32,}$/,
+    pattern: /^[a-zA-Z0-9-_]+$/,
   },
   {
     key: 'DATABASE_URL',
