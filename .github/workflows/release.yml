@@ -6,34 +6,16 @@ on:
       - 'v*'
 
 jobs:
-  berry:
-    name: Setup Yarn/Berry
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '23'
-          cache: 'yarn'
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup yarn/berry
-        run: yarn init -2 && yarn set version stable
-
-      - name: Install dependencies
-        run: yarn install
-
   release:
     name: Publish to npm
     runs-on: ubuntu-latest
-    needs: berry
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Setup Corepack with Yarn/Berry
+        run: corepack enable && yarn init -2 && yarn set version stable
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -42,12 +24,12 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --mode=update-lockfile
 
       - name: Build Project
-        run: yarn build
+        run: yarn tsc
 
       - name: Publish to npm
-        run: yarn publish --access public
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
