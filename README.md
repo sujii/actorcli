@@ -1,4 +1,5 @@
-# **ActorCLI**  
+# **ActorCLI**
+
 > A powerful CLI tool for managing GitHub Actions workflows and environment variables.
 
 ---
@@ -27,11 +28,13 @@
 ## **🚀 Features**
 
 - **🔐 Environment Management**
+
   - Load and sync `.env` files across environments.
   - Secure variable handling with validation.
   - Pre/post operation hooks.
 
 - **⚙️ Workflow Management**
+
   - Simulate GitHub Actions workflows locally using `act`.
   - List available workflows and monitor execution status.
 
@@ -68,16 +71,19 @@ You can configure `ActorCLI` using a `config.json` file:
 ## **⚡ Quick Start**
 
 1. **Install ActorCLI globally**:
+
    ```bash
    npm install -g actorcli
    ```
 
 2. **Initialize in your project**:
+
    ```bash
    actor init
    ```
 
 3. **Load environment variables**:
+
    ```bash
    actor load -e development
    ```
@@ -91,13 +97,13 @@ You can configure `ActorCLI` using a `config.json` file:
 
 ## **📜 Commands**
 
-| Command       | Description                               | Example                          |
-|---------------|-------------------------------------------|----------------------------------|
-| `load`        | Load environment variables.               | `actor load -e production`       |
-| `sync`        | Sync environment variables across services. | `actor sync -f`                  |
-| `simulate`    | Simulate a GitHub Actions workflow locally. | `actor simulate -w build`        |
-| `list`        | Show available workflows.                 | `actor list -f json`             |
-| `help`        | Show help information.                    | `actor help`                     |
+| Command    | Description                                 | Example                    |
+| ---------- | ------------------------------------------- | -------------------------- |
+| `load`     | Load environment variables.                 | `actor load -e production` |
+| `sync`     | Sync environment variables across services. | `actor sync -f`            |
+| `simulate` | Simulate a GitHub Actions workflow locally. | `actor simulate -w build`  |
+| `list`     | Show available workflows.                   | `actor list -f json`       |
+| `help`     | Show help information.                      | `actor help`               |
 
 ---
 
@@ -131,13 +137,13 @@ npm run coverage
 
 ### **Scripts**
 
-| Script      | Description                  |
-|-------------|------------------------------|
-| `build`     | Build the project.           |
-| `dev`       | Start development mode.      |
-| `test`      | Run tests.                   |
-| `lint`      | Lint the codebase.           |
-| `format`    | Format the code.             |
+| Script   | Description             |
+| -------- | ----------------------- |
+| `build`  | Build the project.      |
+| `dev`    | Start development mode. |
+| `test`   | Run tests.              |
+| `lint`   | Lint the codebase.      |
+| `format` | Format the code.        |
 
 ---
 
@@ -161,12 +167,14 @@ actorcli/
 ### **Common Issues and Solutions**
 
 - **Invalid Environment**:
+
   ```plaintext
   Error: Environment 'test' not found.
   Solution: Use one of: development, staging, production.
   ```
 
 - **Sync Failure**:
+
   ```plaintext
   Error: Sync failed: Permission denied.
   Solution: Check GitHub token permissions.
@@ -212,12 +220,12 @@ If you encounter any issues or have questions, feel free to:
 ## **🖋️ Author**
 
 👋 _Susumu Fujii_
-  - [sujii@github.com](https://github.com/sujii)
-  - [sujii@x.com](https://x.com/sujii)
+
+- [sujii@github.com](https://github.com/sujii)
+- [sujii@x.com](https://x.com/sujii)
 
 ---
 
 ## **📜 License**
 
 #### This project is licensed under the MIT License. See the `LICENSE` file for details.
-
