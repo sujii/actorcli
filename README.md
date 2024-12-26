@@ -1,6 +1,12 @@
+#### 　
+#### 　
+
 # **ActorCLI**
 
-> A powerful CLI tool for managing GitHub Actions workflows and environment variables.
+A CLI tool for managing GitHub Actions workflows and environment variables.<br />
+> Associate with [nektos / act](https://github.com/nektos/act) to manipulate the workflows.
+#### 　
+#### 　
 
 ---
 
@@ -219,13 +225,10 @@ If you encounter any issues or have questions, feel free to:
 
 ## **🖋️ Author**
 
-👋 _Susumu Fujii_
-
-- [sujii@github.com](https://github.com/sujii)
-- [sujii@x.com](https://x.com/sujii)
+#### _Susumu Fujii 👋_
 
 ---
 
 ## **📜 License**
 
-#### This project is licensed under the MIT License. See the `LICENSE` file for details.
+MIT License
