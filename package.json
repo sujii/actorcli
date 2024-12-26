@@ -4,7 +4,7 @@
   "description": "A CLI tool for managing GitHub Actions workflows and environment variables.",
   "main": "dist/index.js",
   "bin": {
-    "actor": "./dist/index.js"
+    "actor": "dist/index.js"
   },
   "scripts": {
     "setup:dev": "setup:env --ENV=development",
