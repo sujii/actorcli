@@ -21,7 +21,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: corepack enable && yarn init -2 && yarn set version stable && yarn
+        run: corepack enable && yarn init -2 && yarn set version stable && yarn install --refresh-lockfile
 
       - name: Build Project
         run: yarn build

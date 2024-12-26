@@ -24,8 +24,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: corepack enable && yarn init -2 && yarn set version stable && yarn
-
+        run: corepack enable && yarn init -2 && yarn set version stable && yarn install --mode=<update-lockfile>
       - name: Run Lint
         run: yarn lint
 
@@ -48,7 +47,6 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: corepack enable && yarn init -2 && yarn set version stable && yarn
-
+        run: corepack enable && yarn init -2 && yarn set version stable && yarn install --mode=<update-lockfile>
       - name: Build Project
         run: yarn build
