@@ -32,3 +32,6 @@ dist/
 
 # Miscellaneous
 *.log
+
+# npm
+.npmrc
