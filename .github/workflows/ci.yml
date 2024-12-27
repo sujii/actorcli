@@ -30,7 +30,7 @@ jobs:
         run: yarn install --mode=update-lockfile
 
       - name: Run Lint
-        run: npx lint
+        run: npx eslint .
 
       - name: Run Tests
         run: npx vitest
