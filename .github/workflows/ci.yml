@@ -17,37 +17,63 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Setup Corepack with Yarn/Berry
+        run: corepack enable && yarn init -2 && yarn set version stable
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'yarn'
 
       - name: Install dependencies
-        run: npm install
+        run: yarn install --mode=update-lockfile
 
       - name: Run Lint
-        run: npx lint
+        run: npx eslint .
 
       - name: Run Tests
-        run: npx vitest
+        run: npx vitest &
 
   build:
-    name: Build Project
-    runs-on: ubuntu-latest
-    needs: test
+      name: Run Build
+      runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v3
+
+<<<<<<< HEAD
+      - name: Setup Corepack with Yarn/Berry
+        run: corepack enable && yarn init -2 && yarn set version stable
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'yarn'
 
       - name: Install dependencies
-        run: npm install
+        run: yarn install --mode=update-lockfile
+
+      - name: Install typescript, tsc
+        run: pwd && ls -alF
+  
       - name: Build Project
-        run: npx tsc
+        run: npx build
+=======
+        - name: Setup Corepack with Yarn/Berry
+          run: corepack enable && yarn init -2 && yarn set version stable
+
+        - name: Set up Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: '20'
+            cache: 'yarn'
+
+        - name: Install dependencies
+          run: yarn install --mode=update-lockfile
+
+        - name: Build Project
+          run: yarn exec tsc --allowUnreachableCode --noCheck --project ./tsconfig.json
+>>>>>>> 34f5ae982869911635f714097c7cb140da4fbd50
