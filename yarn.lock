@@ -1117,7 +1117,7 @@ __metadata:
     vitest: "npm:^0.34.1"
     zod: "npm:^3.24.1"
   bin:
-    actor: ./dist/index.js
+    actor: dist/index.js
   languageName: unknown
   linkType: soft
 
