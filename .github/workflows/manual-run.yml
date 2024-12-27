@@ -35,7 +35,7 @@ jobs:
         run:  npm install
 
       - name: Build Project
-        run: npm tsc
+        run: npx tsc
 
       - name: Deploy
         run: echo "Deploying to ${{ github.event.inputs.environment }}..."
