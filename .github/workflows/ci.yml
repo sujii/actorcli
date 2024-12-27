@@ -40,25 +40,6 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v3
 
-<<<<<<< HEAD
-      - name: Setup Corepack with Yarn/Berry
-        run: corepack enable && yarn init -2 && yarn set version stable
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --mode=update-lockfile
-
-      - name: Install typescript, tsc
-        run: pwd && ls -alF
-  
-      - name: Build Project
-        run: npx build
-=======
         - name: Setup Corepack with Yarn/Berry
           run: corepack enable && yarn init -2 && yarn set version stable
 
@@ -73,4 +54,4 @@ jobs:
 
         - name: Build Project
           run: yarn exec tsc --allowUnreachableCode --noCheck --project ./tsconfig.json
->>>>>>> 34f5ae982869911635f714097c7cb140da4fbd50
+
