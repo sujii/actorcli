@@ -28,17 +28,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '23'
+          node-version: '20'
           cache: 'npm'
 
-      - name: Setup Corepack with Yarn/Berry
-        run: corepack enable && yarn init -2 && yarn set version stable
-
       - name: Install dependencies
-        run:  yarn install --mode=<update-lockfile>
+        run:  npm install
 
       - name: Build Project
-        run: yarn build
+        run: npm tsc
 
       - name: Deploy
         run: echo "Deploying to ${{ github.event.inputs.environment }}..."
