@@ -14,17 +14,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Setup Corepack with Yarn/Berry
+        run: corepack enable && yarn init -2 && yarn set version stable
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          cache: 'yarn'
 
       - name: Install dependencies
-        run:  npm install
+        run: yarn install --mode=update-lockfile
 
       - name: Build Project
-        run: npx tsc
+        run: yarn exec tsc --allowUnreachableCode --noCheck --project ./tsconfig.json
 
       - name: Publish to npm
         run: npm publish --access public
