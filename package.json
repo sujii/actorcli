@@ -1,6 +1,6 @@
 {
   "name": "actorcli",
-  "version": "1.0.2-alpha",
+  "version": "1.0.3-alpha",
   "description": "A CLI tool for managing GitHub Actions workflows and environment variables.",
   "main": "dist/index.js",
   "bin": {
@@ -32,7 +32,6 @@
   },
   "author": "Susumu Fujii",
   "license": "MIT",
-  "type": "module",
   "dependencies": {
     "commander": "^10.0.0",
     "cross-env": "^7.0.3",
