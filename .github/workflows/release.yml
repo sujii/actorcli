@@ -14,17 +14,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Corepack with Yarn/Berry
-        run: corepack enable && yarn init -2 && yarn set version stable
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'yarn'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: yarn install --mode=update-lockfile
+        run:  npm install
 
       - name: Build Project
         run: npx tsc
