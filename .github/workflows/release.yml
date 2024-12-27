@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - '*'
 
 jobs:
   release:
@@ -14,22 +14,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '23'
-          registry-url: 'https://registry.npmjs.org'
-
       - name: Setup Corepack with Yarn/Berry
         run: corepack enable && yarn init -2 && yarn set version stable
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
       - name: Install dependencies
-        run:  yarn install --mode=<update-lockfile>
+        run: yarn install --mode=update-lockfile
 
       - name: Build Project
-        run: yarn build
+        run: npx tsc
 
       - name: Publish to npm
-        run: yarn publish --access public
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
