@@ -23,17 +23,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '23'
+          node-version: '20'
           cache: 'yarn'
 
       - name: Install dependencies
         run: yarn install --mode=update-lockfile
 
       - name: Run Lint
-        run: npx eslint . --ext .ts
+        run: npx lint
 
       - name: Run Tests
-        run: yarn vitest
+        run: npx vitest
 
   build:
     name: Build Project
@@ -44,17 +44,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Corepack with Yarn/Berry
-        run: corepack enable && yarn init -2 && yarn set version stable
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '23'
-          cache: 'yarn'
+          node-version: '20'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: yarn install --mode=update-lockfile
-
+        run: npm install
       - name: Build Project
-        run: yarn tsc
+        run: npx tsc
