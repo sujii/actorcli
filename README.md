@@ -85,7 +85,8 @@ You can configure `ActorCLI` using a `config.json` file:
 2. **Initialize in your project**:
 
    ```bash
-   actor init
+   cp .env.sample .env
+   sudo nano .env
    ```
 
 3. **Load environment variables**:
@@ -196,7 +197,7 @@ actorcli/
 
 ## **🤝 Contributing**
 
-We welcome contributions!  
+We welcome contributions!
 Follow these steps to get started:
 
 1. Fork the repository.
