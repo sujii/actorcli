@@ -27,7 +27,7 @@ jobs:
         run: npm install
 
       - name: Run Lint
-        run: npx lint
+        run: npx lint .
 
       - name: Run Tests
         run: npx vitest
@@ -49,5 +49,6 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
       - name: Build Project
         run: npx tsc
