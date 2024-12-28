@@ -1,5 +1,5 @@
 {
-  "name": "@vvvvise/actorcli",
+  "name": "@sujii/actorcli",
   "version": "1.0.7-alpha",
   "description": "A CLI tool for managing GitHub Actions workflows and environment variables.",
   "main": "dist/index.js",
@@ -69,10 +69,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vvvvise/actorcli.git"
+    "url": "git+https://github.com/sujii/actorcli.git"
   },
   "bugs": {
-    "url": "https://github.com/vvvvise/actorcli/issues"
+    "url": "https://github.com/sujii/actorcli/issues"
   },
-  "homepage": "https://github.com/vvvvise/actorcli#readme"
+  "homepage": "https://github.com/sujii/actorcli#readme"
 }
