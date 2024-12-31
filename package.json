@@ -11,7 +11,7 @@
     "setup:prod": "setup:env --ENV=production",
     "setup:stg": "setup:env --ENV=staging",
     "setup:env": "cross-env BUILD_ENV=${ENV} cp ./dotenv.${ENV} ./.env",
-    "build": "tsc",
+    "build": "yarn setup && tsc",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
     "lint": "eslint . --ext .ts",
@@ -19,7 +19,11 @@
     "test": "vitest",
     "clean": "rm -rf dist",
     "prepare": "husky install",
-    "release": "npm version patch && npm run build && npm publish"
+    "release": "npm version patch && npm run build && npm publish",
+    "setup": "yarn setup:development",
+    "setup:development": "cross-env BUILD_ENV=\"development\" cp dotenv.development .env",
+    "setup:staging": "cross-env BUILD_ENV=\"locastagingl\" cp dotenv.staging .env",
+    "setup:production": "cross-env BUILD_ENV=\"production\" cp dotenv.production .env"
   },
   "keywords": [
     "cli",
@@ -34,6 +38,7 @@
   "license": "MIT",
   "dependencies": {
     "commander": "^10.0.0",
+    "coverage": "^0.4.1",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.0",
     "fs-extra": "^11.1.1",

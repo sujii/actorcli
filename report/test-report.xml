@@ -2,10 +2,10 @@
   <file path="tests/envManager.test.ts">
     <testCase name="syncEnv - should successfully sync environment variables" duration="8" />
     <testCase name="syncEnv - should throw error when GITHUB_TOKEN is not set" duration="2" />
-    <testCase name="syncEnv - should throw error when ENCRYPTION_KEY_ID is not set" duration="1" />
+    <testCase name="syncEnv - should throw error when ENCRYPTION_KEY_ID is not set" duration="2" />
     <testCase name="syncEnv - should handle API errors gracefully" duration="1" />
     <testCase name="syncEnv - should use default repo values when not provided" duration="1" />
-    <testCase name="syncEnv - should handle concurrent API requests" duration="153" />
+    <testCase name="syncEnv - should handle concurrent API requests" duration="151" />
   </file>
   <file path="tests/list.test.ts">
     <testCase name="Workflow Lister - should list ci.yml file in .github/workflows" duration="2" />
