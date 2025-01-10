@@ -54,7 +54,7 @@
     "@changesets/cli": "^2.27.11",
     "@types/node": "^20.6.1",
     "@typescript-eslint/eslint-plugin": "^8.19.1",
-    "@typescript-eslint/parser": "^6.3.0",
+    "@typescript-eslint/parser": "^8.19.1",
     "ajv": "^8.17.1",
     "eslint": "^8.48.0",
     "eslint-config-prettier": "^9.0.0",
