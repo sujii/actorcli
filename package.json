@@ -7,10 +7,6 @@
     "actor": "dist/index.js"
   },
   "scripts": {
-    "setup:dev": "setup:env --ENV=development",
-    "setup:prod": "setup:env --ENV=production",
-    "setup:stg": "setup:env --ENV=staging",
-    "setup:env": "cross-env BUILD_ENV=${ENV} cp ./dotenv.${ENV} ./.env",
     "build": "yarn setup && tsc",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
@@ -21,9 +17,9 @@
     "prepare": "husky install",
     "release": "npm version patch && npm run build && npm publish",
     "setup": "yarn setup:development",
-    "setup:development": "cross-env BUILD_ENV=\"development\" cp dotenv.development .env",
-    "setup:staging": "cross-env BUILD_ENV=\"locastagingl\" cp dotenv.staging .env",
-    "setup:production": "cross-env BUILD_ENV=\"production\" cp dotenv.production .env"
+    "setup:development": "cross-env APP_ENV=\"development\" cp dotenv.development .env",
+    "setup:staging": "cross-env APP_ENV=\"locastagingl\" cp dotenv.staging .env",
+    "setup:production": "cross-env APP_ENV=\"production\" cp dotenv.production .env"
   },
   "keywords": [
     "cli",
@@ -37,17 +33,17 @@
   "author": "Susumu Fujii",
   "license": "MIT",
   "dependencies": {
-    "commander": "^10.0.0",
+    "commander": "^10.0.1",
     "coverage": "^0.4.1",
     "cross-env": "^7.0.3",
-    "dotenv": "^16.0.0",
-    "fs-extra": "^11.1.1",
+    "dotenv": "^16.4.7",
+    "fs-extra": "^11.2.0",
     "ofetch": "^1.4.1",
     "readline": "^1.3.0",
-    "ts-node": "^10.9.1",
+    "ts-node": "^10.9.2",
     "tsc": "^2.0.4",
     "typescript": ">=4.3.5 <5.4.0",
-    "vite": "^6.0.6",
+    "vite": "^6.0.7",
     "zod": "^3.24.1"
   },
   "devDependencies": {
@@ -56,13 +52,13 @@
     "@typescript-eslint/eslint-plugin": "^8.19.1",
     "@typescript-eslint/parser": "^8.19.1",
     "ajv": "^8.17.1",
-    "eslint": "^8.48.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^5.0.0",
-    "husky": "^8.0.0",
-    "prettier": "^3.0.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^8.10.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "husky": "^8.0.3",
+    "prettier": "^3.4.2",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^0.34.1",
+    "vitest": "^2.1.8",
     "vitest-sonar-reporter": "^2.0.0"
   },
   "engines": {
