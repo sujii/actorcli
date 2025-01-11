@@ -1,5 +1,6 @@
-import { type HookFunction } from '../ActorCLI';
+import { HookFunction } from '../ActorCLI';
 import { logError, logInfo } from '../utils/logger';
+// Removed incorrect import of Record from 'typescript'
 
 interface EnvValidationRule {
   key: string;
@@ -30,12 +31,17 @@ const ENV_VALIDATION_RULES: EnvValidationRule[] = [
     required: true,
     pattern: /^[a-zA-Z]+:\/\/.+/,
   },
+  {
+    key: 'GITHUB_TOKEN',
+    required: true,
+    pattern: /^[a-zA-Z0-9-_]+$/,
+  }
 ];
 
 /**
  * Hook function to validate environment variables against predefined rules
  */
-export const validateEnvHook: HookFunction = (
+export const validateEnvHook: typeof HookFunction = (
   env: Record<string, string>,
 ): void => {
   try {

@@ -7,7 +7,7 @@ export const logError = (message: string) => {
 };
 
 export const logDebug = (message: string) => {
-  if (process.env.DEBUG === 'true') {
+  if (process.env.DEBUG && process.env.DEBUG === 'true') {
     console.debug(`[DEBUG]: ${message}`);
   }
 };

@@ -24,7 +24,8 @@ export const promptInstallAct = async (): Promise<boolean> => {
         if (answer.toLowerCase() === 'y') {
           try {
             console.log('Installing `act`...');
-            execSync('brew install act'); // TODO: Adjust for the target OS
+            const installCommand = process.platform === 'win32' ? 'choco install act' : 'brew install act';
+            execSync(installCommand);
             resolve(true);
           } catch (error) {
             console.error(`Failed to install act: ${error}`);

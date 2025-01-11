@@ -7,12 +7,14 @@ export interface EnvConfig {
   APP_ENV?: string;
   APP_NAME?: string;
   API_KEY?: string;
+  GITHUB_TOKEN?: string;
 }
 
 const defaultEnv = {
   APP_ENV: 'development',
   APP_NAME: 'actorCLI',
-  API_KEY: '',
+  API_KEY: process.env.API_KEY || '',
+  GITHUB_TOKEN: process.env.GITHUB_TOKEN || '',
 } as EnvConfig;
 
 export const loadEnv = async (envPath: string): Promise<void> => {
@@ -37,7 +39,7 @@ export const loadEnv = async (envPath: string): Promise<void> => {
     const mergedEnv: Record<string, string> = {
       ...defaultEnv,
       ...Object.fromEntries(
-        Object.entries(customEnv).filter(([value]) => value != null),
+        Object.entries(customEnv).filter(([, value]) => value != null),
       ),
     };
 
@@ -48,16 +50,7 @@ export const loadEnv = async (envPath: string): Promise<void> => {
       }
     });
 
-    // // Log success without exposing sensitive values
-    // const safeEnv = Object.fromEntries(
-    //   Object.entries(mergedEnv).map(([key, value]) => [
-    //     key,
-    //     key.match(/key|token|secret|password/i) ? '[REDACTED]' : value
-    //   ])
-    // );
-
     console.log('Environment variables loaded successfully');
-    // console.debug('Configuration:', safeEnv);
   } catch (error) {
     const errorMessage =
       error instanceof Error
@@ -80,8 +73,8 @@ export const syncEnv = async (envPath: string): Promise<void> => {
       .readFile(envPath, 'utf8')
       .then(dotenv.parse);
 
-    const REPO_OWNER = process.env.REPO_OWNER || 'your-org-or-username';
-    const REPO_NAME = process.env.REPO_NAME || 'your-repo-name';
+    const REPO_OWNER = process.env.REPO_OWNER || 'sujii';
+    const REPO_NAME = process.env.REPO_NAME || 'actorcli';
     const KEY_ID = process.env.ENCRYPTION_KEY_ID;
 
     if (!KEY_ID) {
@@ -101,11 +94,11 @@ export const syncEnv = async (envPath: string): Promise<void> => {
         try {
           await ofetch(apiUrl, {
             method: 'PUT',
-            body: {
+            body: JSON.stringify({
               encrypted_value: value,
               key_id: KEY_ID,
-            },
-            headers,
+            }),
+            headers
           });
           console.log(`✓ Synchronized secret: ${key}`);
         } catch (error) {

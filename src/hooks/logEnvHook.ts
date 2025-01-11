@@ -1,10 +1,10 @@
-import { type HookFunction } from '../ActorCLI';
+import { HookFunction } from '../ActorCLI';
 import { logInfo } from '../utils/logger';
 
 /**
  * Hook function to safely log environment variables while protecting sensitive data
  */
-export const logEnvHook: HookFunction = (env: Record<string, string>): void => {
+export const logEnvHook: typeof HookFunction = (env: Record<string, string>): void => {
   try {
     // Create a sanitized copy of environment variables
     const sanitizedEnv = Object.entries(env).reduce(

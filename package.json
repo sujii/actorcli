@@ -1,6 +1,6 @@
 {
   "name": "@sujii/actorcli",
-  "version": "1.0.7-alpha",
+  "version": "1.1.0-alpha",
   "description": "A CLI tool for managing GitHub Actions workflows and environment variables.",
   "main": "dist/index.js",
   "bin": {
@@ -10,8 +10,9 @@
     "build": "yarn setup && tsc",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint .",
     "format": "prettier --write .",
+    "typecheck": "tsc --noEmit",
     "test": "vitest",
     "clean": "rm -rf dist",
     "prepare": "husky install",

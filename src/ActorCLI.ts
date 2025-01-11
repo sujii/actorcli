@@ -1,12 +1,10 @@
 import dotenv from 'dotenv';
 import fs from 'node:fs';
 
-export type HookFunction = (env: Record<string, string>) => void;
-
 export class ActorCLI {
-  private hooks: HookFunction[] = [];
+  private hooks: Function[] = [];
 
-  addHook(hook: HookFunction) {
+  addHook(hook: Function) {
     this.hooks.push(hook);
   }
 
@@ -16,7 +14,6 @@ export class ActorCLI {
     }
   }
 
-  // Synv env
   async syncEnv(envPath: string) {
     const envConfig = dotenv.parse(fs.readFileSync(envPath));
     console.log('Synchronizing environment variables...');
@@ -24,11 +21,11 @@ export class ActorCLI {
   }
 }
 
-// Usages
-const cli = new ActorCLI();
+export function HookFunction(env: Record<string, string>) {
+  const cli = new ActorCLI();
 
-cli.addHook((env) => {
-  console.log('Custom hook: Logging environment variables', env);
-});
-
-cli.syncEnv('./.env');
+  cli.addHook((env: Record<string, string>) => {
+    console.log('Custom hook: Logging environment variables', env);
+  });
+  cli.syncEnv('./.env');
+}
