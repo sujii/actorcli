@@ -936,40 +936,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sujii/actorcli@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "@sujii/actorcli@workspace:."
-  dependencies:
-    "@changesets/cli": "npm:^2.27.11"
-    "@types/node": "npm:^22.10.5"
-    "@typescript-eslint/eslint-plugin": "npm:^8.19.1"
-    "@typescript-eslint/parser": "npm:^8.19.1"
-    ajv: "npm:^8.17.1"
-    commander: "npm:^13.0.0"
-    coverage: "npm:^0.4.1"
-    cross-env: "npm:^7.0.3"
-    dotenv: "npm:^16.4.7"
-    eslint: "npm:^8.57.1"
-    eslint-config-prettier: "npm:^8.10.0"
-    eslint-plugin-prettier: "npm:^5.2.1"
-    fs-extra: "npm:^11.2.0"
-    husky: "npm:^8.0.3"
-    ofetch: "npm:^1.4.1"
-    prettier: "npm:^3.4.2"
-    readline: "npm:^1.3.0"
-    ts-node: "npm:^10.9.2"
-    tsc: "npm:^2.0.4"
-    typescript: "npm:>=4.3.5 <5.4.0"
-    vite: "npm:^6.0.7"
-    vite-tsconfig-paths: "npm:^5.1.4"
-    vitest: "npm:^2.1.8"
-    vitest-sonar-reporter: "npm:^2.0.0"
-    zod: "npm:^3.24.1"
-  bin:
-    actor: dist/index.js
-  languageName: unknown
-  linkType: soft
-
 "@tsconfig/node10@npm:^1.0.7":
   version: 1.0.11
   resolution: "@tsconfig/node10@npm:1.0.11"
@@ -1268,6 +1234,40 @@ __metadata:
   checksum: 10c0/6d4ee461a7734b2f48836ee0fbb752903606e576cc100eb49340295129ca0b452f3ba91ddd4424a1d4406a98adfb2ebb6bd0ff4c49d7a0930c10e462719bbfd7
   languageName: node
   linkType: hard
+
+"actorcli@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "actorcli@workspace:."
+  dependencies:
+    "@changesets/cli": "npm:^2.27.11"
+    "@types/node": "npm:^22.10.5"
+    "@typescript-eslint/eslint-plugin": "npm:^8.19.1"
+    "@typescript-eslint/parser": "npm:^8.19.1"
+    ajv: "npm:^8.17.1"
+    commander: "npm:^13.0.0"
+    coverage: "npm:^0.4.1"
+    cross-env: "npm:^7.0.3"
+    dotenv: "npm:^16.4.7"
+    eslint: "npm:^8.57.1"
+    eslint-config-prettier: "npm:^8.10.0"
+    eslint-plugin-prettier: "npm:^5.2.1"
+    fs-extra: "npm:^11.2.0"
+    husky: "npm:^8.0.3"
+    ofetch: "npm:^1.4.1"
+    prettier: "npm:^3.4.2"
+    readline: "npm:^1.3.0"
+    ts-node: "npm:^10.9.2"
+    tsc: "npm:^2.0.4"
+    typescript: "npm:>=4.3.5 <5.4.0"
+    vite: "npm:^6.0.7"
+    vite-tsconfig-paths: "npm:^5.1.4"
+    vitest: "npm:^2.1.8"
+    vitest-sonar-reporter: "npm:^2.0.0"
+    zod: "npm:^3.24.1"
+  bin:
+    actor: dist/index.js
+  languageName: unknown
+  linkType: soft
 
 "agent-base@npm:^7.1.0, agent-base@npm:^7.1.2":
   version: 7.1.3
