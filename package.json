@@ -34,7 +34,7 @@
   "author": "Susumu Fujii",
   "license": "MIT",
   "dependencies": {
-    "commander": "^10.0.1",
+    "commander": "^13.0.0",
     "coverage": "^0.4.1",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
