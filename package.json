@@ -1,12 +1,13 @@
 {
   "name": "actorcli",
-  "version": "v1.2.4-alpha",
+  "version": "1.2.5-alpha",
   "description": "A CLI tool for managing GitHub Actions workflows and environment variables.",
   "main": "dist/index.js",
   "bin": {
     "actor": "dist/index.js"
   },
   "scripts": {
+    "ci": "yarn --frozen-lockfile",
     "build": "yarn setup && tsc",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
@@ -34,6 +35,7 @@
   "author": "Susumu Fujii",
   "license": "MIT",
   "dependencies": {
+    "actorcli": "^1.0.2-alpha",
     "commander": "^13.0.0",
     "coverage": "^0.4.1",
     "cross-env": "^7.0.3",

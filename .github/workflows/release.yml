@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - '*'
+      - 'v*'
 
 jobs:
   release:
@@ -24,7 +24,7 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install --refresh-lockfile
+        run: yarn install --mode=update-lockfile
 
       - name: Build Project
         run: yarn exec tsc --allowUnreachableCode --noCheck --project ./tsconfig.json
@@ -32,4 +32,4 @@ jobs:
       - name: Publish to npm
         run: npm publish --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ GITHUB_AUTH_TOKEN }}
