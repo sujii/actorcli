@@ -1,4 +1,4 @@
-import { spawn } from 'child_process';
+import { spawn, spawnSync } from 'child_process';
 import readline from 'readline';
 import { logError, logInfo } from './logger';
 
@@ -34,12 +34,8 @@ export const invokeAct = (workflowPath: string, options: string[] = []) => {
  * @returns A boolean indicating whether `act` is installed.
  */
 export const checkActInstallation = (): boolean => {
-  try {
-    spawn('act', ['--version'], { stdio: 'ignore' });
-    return true;
-  } catch {
-    return false;
-  }
+  const result = spawnSync('act', ['--version'], { stdio: 'ignore' });
+  return result.status === 0;
 };
 
 /**

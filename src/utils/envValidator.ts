@@ -1,21 +1,19 @@
-import Ajv from 'ajv';
-import dotenv from 'dotenv';
-import fs from 'node:fs';
+import Ajv from 'ajv'
+import dotenv from 'dotenv'
+import fs from 'node:fs'
 
-const schema = JSON.parse(fs.readFileSync('./.env.schema.json', 'utf-8'));
-const ajv = new Ajv();
+export function validateEnv(envPath: string) {
+  const schema = JSON.parse(fs.readFileSync('./.env.schema.json', 'utf-8'))
+  const ajv = new Ajv()
+  const validate = ajv.compile(schema)
 
-export const validateEnv = (envPath: string) => {
-  const envConfig = dotenv.parse(fs.readFileSync(envPath));
+  const envConfig = dotenv.parse(fs.readFileSync(envPath))
 
-  const validate = ajv.compile(schema);
-  const isValid = validate(envConfig);
-
-  if (!isValid) {
-    console.error('Invalid .env configuration:', validate.errors);
-    process.exit(1);
+  if (validate(envConfig)) {
+    console.log('Environment validated successfully')
+    return envConfig
   }
 
-  console.log('Environment validated successfully');
-  return envConfig;
-};
+  console.error(`Invalid environment file: Field ${validate.errors?.[0].instancePath} ${validate.errors?.[0].message}`)
+  process.exit(1)
+}

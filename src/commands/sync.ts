@@ -13,56 +13,42 @@ const promptEnvironment = async (): Promise<Environment> => {
     output: process.stdout,
   });
 
-  try {
-    const env = await new Promise<string>((resolve) => {
-      rl.question(
-        `Select environment (${VALID_ENVIRONMENTS.join('/')}): `,
-        (answer) => resolve(answer.toLowerCase().trim()),
-      );
-    });
+  const env = await new Promise<string>((resolve) => {
+    rl.question(
+      `Select environment (${VALID_ENVIRONMENTS.join('/')}): `,
+      (answer) => resolve(answer.toLowerCase().trim()),
+    );
+  });
 
-    if (!VALID_ENVIRONMENTS.includes(env as Environment)) {
-      throw new Error(
-        `Invalid environment. Please choose one of: ${VALID_ENVIRONMENTS.join(', ')}`,
-      );
-    }
-
-    return env as Environment;
-  } finally {
-    rl.close();
+  if (!VALID_ENVIRONMENTS.includes(env as Environment)) {
+    throw new Error(
+      `Invalid environment. Please choose one of: ${VALID_ENVIRONMENTS.join(', ')}`,
+    );
   }
+
+  return env as Environment;
 };
 
-interface SyncCommandOptions {
-  force?: boolean;
-}
-
 export const handleSyncCommand = async (
-  options?: SyncCommandOptions,
+  options?: { force?: boolean },
 ): Promise<void> => {
   try {
     const env = await promptEnvironment();
     const envPath = path.resolve(process.cwd(), `dotenv.${env}`);
 
-    // Check if file exists and is readable
     try {
       await fs.promises.access(envPath, fs.constants.R_OK);
     } catch (error) {
       throw new Error(`Environment file not found or not readable: ${envPath}`);
     }
 
-    // Warn if syncing production environment
-    if (env === 'production') {
-      logError('Syncing production environment - please proceed with caution');
-
-      if (!options?.force) {
-        const confirmation = await promptConfirmation(
-          'Are you sure you want to sync production environment? (y/N): ',
-        );
-        if (!confirmation) {
-          logInfo('Sync cancelled');
-          return;
-        }
+    if (env === 'production' && !options?.force) {
+      const confirmation = await promptConfirmation(
+        'Are you sure you want to sync production environment? (y/N): ',
+      );
+      if (!confirmation) {
+        logInfo('Sync cancelled');
+        return;
       }
     }
 

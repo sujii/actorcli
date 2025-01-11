@@ -1,7 +1,11 @@
 /**
  * Global type declarations
  */
-declare global {}
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv extends EnvConfig {}
+  }
+}
 
 /**
  * Environment configuration interface
