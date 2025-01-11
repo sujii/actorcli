@@ -24,7 +24,7 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install --immutable
+        run: yarn install --immutable --refresh-lockfile
 
       - name: Build Project
         run: yarn exec tsc --allowUnreachableCode --noCheck --project ./tsconfig.json
