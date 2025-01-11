@@ -1,6 +1,6 @@
 {
   "name": "actorcli",
-  "version": "1.2.2-alpha",
+  "version": "v1.2.4-alpha",
   "description": "A CLI tool for managing GitHub Actions workflows and environment variables.",
   "main": "dist/index.js",
   "bin": {
