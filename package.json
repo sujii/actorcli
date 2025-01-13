@@ -58,7 +58,7 @@
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-prettier": "^5.2.1",
-    "husky": "^8.0.3",
+    "husky": "^9.1.7",
     "prettier": "^3.4.2",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^2.1.8",
