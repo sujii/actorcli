@@ -1,3 +1,4 @@
+import { Command } from 'commander';
 import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
@@ -6,6 +7,24 @@ import { logError, logInfo } from '../utils/logger';
 
 const VALID_ENVIRONMENTS = ['development', 'staging', 'production'] as const;
 type Environment = (typeof VALID_ENVIRONMENTS)[number];
+interface LoadCommandOptions {
+  env?: string;
+}
+
+const program = new Command();
+
+program
+  .option('-e, --env <environment>', 'Target environment', 'development') // defaultを設定
+  .action(async (options) => {
+    if (['development', 'staging', 'production'].includes(options.env)) {
+      await handleLoadCommand(options);
+    } else {
+      console.error('Invalid environment. Choose from: development, staging, production');
+      process.exit(1);
+    }
+  });
+
+program.parse(process.argv);
 
 const promptEnvironment = async (): Promise<Environment> => {
   const rl = readline.createInterface({
@@ -32,10 +51,6 @@ const promptEnvironment = async (): Promise<Environment> => {
     rl.close();
   }
 };
-
-interface LoadCommandOptions {
-  env?: string;
-}
 
 export const handleLoadCommand = async (
   options?: LoadCommandOptions,

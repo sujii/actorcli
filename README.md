@@ -10,12 +10,6 @@ A CLI tool for managing GitHub Actions workflows and environment variables.<br /
 
 ---
 
-## ♻️ Duplicated
-### The repository has been relocated to:
-#### [sujii/actorcli](https://github.com/sujii/actorcli) 👉
-
----
-
 ## **📖 Table of Contents**
 
 1. [Features](#-features)
