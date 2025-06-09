@@ -1,0 +1,2272 @@
+# Project Code Documentation
+
+Generated on 2025-01-11T20:35:10.6N+0900
+
+## Directives Structure
+```
+.
+├── LICENSE
+├── README.md
+├── SECURITY.md
+├── dotenv.development
+├── dotenv.production
+├── dotenv.staging
+├── eslint.config.js
+├── package.json
+├── project_code.md
+├── report
+│   └── test-report.xml
+├── scripts
+│   ├── generate_code_markdown.sh
+│   └── setup.sh
+├── src
+│   ├── ActorCLI.ts
+│   ├── commands
+│   │   ├── custom.ts
+│   │   ├── help.ts
+│   │   ├── list.ts
+│   │   ├── load.ts
+│   │   ├── simulate.ts
+│   │   └── sync.ts
+│   ├── hooks
+│   │   ├── logEnvHook.ts
+│   │   └── validateEnvHook.ts
+│   ├── index.d.ts
+│   ├── index.ts
+│   └── utils
+│       ├── actInstaller.ts
+│       ├── actInvoker.ts
+│       ├── envManager.ts
+│       ├── envValidator.ts
+│       ├── logger.ts
+│       └── workflowLister.ts
+├── tests
+│   ├── envManager.test.ts
+│   └── list.test.ts
+├── tsconfig.json
+├── vitest.config.ts
+└── yarn.lock
+```
+
+## Table of Index
+
+- [`./.husky/_/husky.sh`](#---husky---husky-sh)
+- [`./.env.schema.json`](#---env-schema-json)
+- [`./.changeset/config.json`](#---changeset-config-json)
+- [`./.changeset/README.md`](#---changeset-readme-md)
+- [`./.changeset/tricky-countries-repeat.md`](#---changeset-tricky-countries-repeat-md)
+- [`./.yarnrc.yml`](#---yarnrc-yml)
+- [`./tests/envManager.test.ts`](#--tests-envmanager-test-ts)
+- [`./tests/list.test.ts`](#--tests-list-test-ts)
+- [`./README.md`](#--readme-md)
+- [`./package.json`](#--package-json)
+- [`./scripts/setup.sh`](#--scripts-setup-sh)
+- [`./scripts/generate_code_markdown.sh`](#--scripts-generate-code-markdown-sh)
+- [`./.github/workflows/release.yml`](#---github-workflows-release-yml)
+- [`./.github/workflows/manual-run.yml`](#---github-workflows-manual-run-yml)
+- [`./.github/workflows/ci.yml`](#---github-workflows-ci-yml)
+- [`./.github/dependabot.yml`](#---github-dependabot-yml)
+- [`./tsconfig.json`](#--tsconfig-json)
+- [`./eslint.config.js`](#--eslint-config-js)
+- [`./.vscode/settings.json`](#---vscode-settings-json)
+- [`./vitest.config.ts`](#--vitest-config-ts)
+- [`./SECURITY.md`](#--security-md)
+- [`./src/utils/workflowLister.ts`](#--src-utils-workflowlister-ts)
+- [`./src/utils/actInvoker.ts`](#--src-utils-actinvoker-ts)
+- [`./src/utils/envValidator.ts`](#--src-utils-envvalidator-ts)
+- [`./src/utils/actInstaller.ts`](#--src-utils-actinstaller-ts)
+- [`./src/utils/logger.ts`](#--src-utils-logger-ts)
+- [`./src/utils/envManager.ts`](#--src-utils-envmanager-ts)
+- [`./src/hooks/logEnvHook.ts`](#--src-hooks-logenvhook-ts)
+- [`./src/hooks/validateEnvHook.ts`](#--src-hooks-validateenvhook-ts)
+- [`./src/commands/help.ts`](#--src-commands-help-ts)
+- [`./src/commands/load.ts`](#--src-commands-load-ts)
+- [`./src/commands/simulate.ts`](#--src-commands-simulate-ts)
+- [`./src/commands/custom.ts`](#--src-commands-custom-ts)
+- [`./src/commands/list.ts`](#--src-commands-list-ts)
+- [`./src/commands/sync.ts`](#--src-commands-sync-ts)
+- [`./src/ActorCLI.ts`](#--src-actorcli-ts)
+- [`./src/index.ts`](#--src-index-ts)
+- [`./src/index.d.ts`](#--src-index-d-ts)
+
+## <a id="---husky---husky-sh"></a> ./.husky/_/husky.sh
+```sh
+#!/usr/bin/env sh
+if [ -z "$husky_skip_init" ]; then
+  debug () {
+    if [ "$HUSKY_DEBUG" = "1" ]; then
+      echo "husky (debug) - $1"
+    fi
+  }
+
+  readonly hook_name="$(basename -- "$0")"
+  debug "starting $hook_name..."
+
+  if [ "$HUSKY" = "0" ]; then
+    debug "HUSKY env variable is set to 0, skipping hook"
+    exit 0
+  fi
+
+  if [ -f ~/.huskyrc ]; then
+    debug "sourcing ~/.huskyrc"
+    . ~/.huskyrc
+  fi
+
+  readonly husky_skip_init=1
+  export husky_skip_init
+  sh -e "$0" "$@"
+  exitCode="$?"
+
+  if [ $exitCode != 0 ]; then
+    echo "husky - $hook_name hook exited with code $exitCode (error)"
+  fi
+
+  if [ $exitCode = 127 ]; then
+    echo "husky - command not found in PATH=$PATH"
+  fi
+
+  exit $exitCode
+fi
+```
+
+## <a id="---env-schema-json"></a> ./.env.schema.json
+```json
+[
+  {
+    "type": "object",
+    "properties": {
+      "APP_ENV": {
+        "type": "string",
+        "enum": ["development", "staging", "production"]
+      },
+      "APP_NAME": { "type": "string" },
+      "API_KEY": { "type": "string" },
+      "DATABASE_URL": { "type": "string", "format": "uri" },
+      "GITHUB_TOKEN": { "type": "string" }
+    },
+    "required": ["APP_ENV", "APP_NAME"]
+  }
+]
+```
+
+## <a id="---changeset-config-json"></a> ./.changeset/config.json
+```json
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.0.5/schema.json",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "fixed": [],
+  "linked": [],
+  "access": "restricted",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": []
+}
+```
+
+## <a id="---changeset-readme-md"></a> ./.changeset/README.md
+```md
+# Changesets
+
+Hello and welcome! This folder has been automatically generated by `@changesets/cli`, a build tool that works
+with multi-package repos, or single-package repos to help you version and publish your code. You can
+find the full documentation for it [in our repository](https://github.com/changesets/changesets)
+
+We have a quick list of common questions to get you started engaging with this project in
+[our documentation](https://github.com/changesets/changesets/blob/main/docs/common-questions.md)
+```
+
+## <a id="---changeset-tricky-countries-repeat-md"></a> ./.changeset/tricky-countries-repeat.md
+```md
+---
+'actorcli': patch
+---
+
+Modify: Set yarn-version to berry in .github/workflows/\*.yml
+```
+
+## <a id="---yarnrc-yml"></a> ./.yarnrc.yml
+```yml
+nodeLinker: node-modules
+```
+
+## <a id="--tests-envmanager-test-ts"></a> ./tests/envManager.test.ts
+```ts
+import dotenv from 'dotenv';
+import fs from 'node:fs';
+import { ofetch } from 'ofetch';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { loadEnv, syncEnv } from '../src/utils/envManager';
+
+// Mock external modules
+vi.mock('ofetch');
+vi.mock('dotenv');
+vi.mock('node:fs');
+
+describe('envManager', () => {
+  let mockEnvPath: string;
+  const mockEnvConfig = {
+    SECRET_1: 'value1',
+    SECRET_2: 'value2',
+    API_KEY: 'test-key',
+  };
+
+  let originalEnv: NodeJS.ProcessEnv;
+
+  beforeEach(() => {
+    // Reset environment variables
+    originalEnv = { ...process.env };
+    mockEnvPath = '../.env';
+
+    // Mock fs.promises.readFile
+    vi.mocked(fs.promises.readFile).mockResolvedValue('mock-env-content');
+
+    // Mock dotenv.parse
+    vi.mocked(dotenv.parse).mockReturnValue(mockEnvConfig);
+
+    // Mock ofetch
+    vi.mocked(ofetch).mockResolvedValue({ status: 201 });
+
+    // Mock console methods
+    console.log = vi.fn();
+    console.error = vi.fn();
+
+    // Set required environment variables
+    process.env.GITHUB_TOKEN = 'test-token';
+    process.env.ENCRYPTION_KEY_ID = 'test-key-id';
+  });
+
+  afterEach(() => {
+    process.env = originalEnv;
+    vi.clearAllMocks();
+  });
+
+  describe('loadEnv', () => {
+    it('should load and set environment variables', async () => {
+      await loadEnv(mockEnvPath);
+
+      expect(fs.promises.readFile).toHaveBeenCalledWith(mockEnvPath, 'utf8');
+      expect(dotenv.parse).toHaveBeenCalledWith('mock-env-content');
+
+      Object.entries(mockEnvConfig).forEach(([key, value]) => {
+        expect(process.env[key]).toBe(value);
+      });
+
+      expect(console.log).toHaveBeenCalledWith('Environment variables loaded successfully');
+    });
+
+    it('should throw error when envPath is not provided', async () => {
+      await expect(loadEnv('')).rejects.toThrow('Environment file path is required');
+    });
+
+    it('should throw error when environment file is invalid', async () => {
+      vi.mocked(dotenv.parse).mockReturnValueOnce(null);
+      await expect(loadEnv(mockEnvPath)).rejects.toThrow('Invalid environment file');
+    });
+
+    it('should handle file read errors', async () => {
+      const mockError = new Error('File read error');
+      vi.mocked(fs.promises.readFile).mockRejectedValueOnce(mockError);
+
+      await expect(loadEnv(mockEnvPath)).rejects.toThrow(
+        'Failed to load environment: File read error'
+      );
+    });
+  });
+
+  describe('syncEnv', () => {
+    it('should synchronize environment variables', async () => {
+      await syncEnv(mockEnvPath);
+
+      expect(fs.promises.readFile).toHaveBeenCalledWith(mockEnvPath, 'utf8');
+      expect(dotenv.parse).toHaveBeenCalledWith('mock-env-content');
+      expect(ofetch).toHaveBeenCalledTimes(Object.keys(mockEnvConfig).length);
+
+      Object.keys(mockEnvConfig).forEach((key) => {
+        expect(ofetch).toHaveBeenCalledWith(
+          `https://api.github.com/repos/sujii/actorcli/actions/secrets/${key}`,
+          {
+            method: 'PUT',
+            body: {
+              encrypted_value: mockEnvConfig[key],
+              key_id: process.env.ENCRYPTION_KEY_ID,
+            },
+            headers: {
+              Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+              Accept: 'application/vnd.github.v3+json',
+            },
+          },
+        );
+      });
+
+      Object.keys(mockEnvConfig).forEach((key) => {
+        expect(console.log).toHaveBeenCalledWith(`✓ Synchronized secret: ${key}`);
+      });
+    });
+
+    it('should throw error when GITHUB_TOKEN is not set', async () => {
+      delete process.env.GITHUB_TOKEN;
+      await expect(syncEnv(mockEnvPath)).rejects.toThrow('GITHUB_TOKEN is not set');
+    });
+
+    it('should throw error when ENCRYPTION_KEY_ID is not set', async () => {
+      delete process.env.ENCRYPTION_KEY_ID;
+      await expect(syncEnv(mockEnvPath)).rejects.toThrow('ENCRYPTION_KEY_ID is not set');
+    });
+
+    it('should handle API errors gracefully', async () => {
+      const mockError = new Error('API Error');
+      vi.mocked(ofetch).mockRejectedValueOnce(mockError);
+
+      await syncEnv(mockEnvPath);
+
+      expect(console.error).toHaveBeenCalledWith(
+        '✗ Failed to synchronize secret SECRET_1:',
+        'API Error'
+      );
+    });
+
+    it('should handle file read errors', async () => {
+      const mockError = new Error('File read error');
+      vi.mocked(fs.promises.readFile).mockRejectedValueOnce(mockError);
+
+      await expect(syncEnv(mockEnvPath)).rejects.toThrow(
+        'Failed to synchronize environment variables: File read error'
+      );
+    });
+
+    it('should use default repo values when not provided', async () => {
+      process.env.REPO_OWNER = '';
+      process.env.REPO_NAME = '';
+
+      await syncEnv(mockEnvPath);
+
+      expect(ofetch).toHaveBeenCalledWith(
+        expect.stringContaining('sujii/actorcli'),
+        expect.any(Object)
+      );
+    });
+
+    it('should handle concurrent API requests', async () => {
+      const mockResponses = [
+        { status: 201, delay: 100 },
+        { status: 201, delay: 50 },
+        { status: 201, delay: 150 },
+      ];
+
+      let callIndex = 0;
+      vi.mocked(ofetch).mockImplementation(() =>
+        new Promise((resolve) =>
+          setTimeout(() =>
+            resolve(mockResponses[callIndex++]),
+            mockResponses[callIndex].delay
+          )
+        )
+      );
+
+      await syncEnv(mockEnvPath);
+
+      expect(ofetch).toHaveBeenCalledTimes(Object.keys(mockEnvConfig).length);
+      expect(console.log).toHaveBeenCalledTimes(Object.keys(mockEnvConfig).length);
+    });
+  });
+});
+```
+
+## <a id="--tests-list-test-ts"></a> ./tests/list.test.ts
+```ts
+import { describe, it } from 'vitest';
+import { listWorkflows } from '../src/utils/workflowLister';
+
+describe('Workflow Lister', () => {
+  it('should list ci.yml file in .github/workflows', async () => {
+    const workflows = await listWorkflows();
+    console.log(workflows);
+    // expect(workflows).toContain('ci.yml');
+    // expect(workflows).toBeInstanceOf(Array);
+  });
+});
+```
+
+## <a id="--readme-md"></a> ./README.md
+```md
+#### 　
+#### 　
+
+# **ActorCLI**
+
+A CLI tool for managing GitHub Actions workflows and environment variables.<br />
+> Associate with [nektos / act](https://github.com/nektos/act) to manipulate the workflows.
+#### 　
+#### 　
+
+---
+
+## **📖 Table of Contents**
+
+1. [Features](#-features)
+2. [Configuration](#%EF%B8%8F-configuration)
+   - [Environment Options](#environment-options)
+3. [Quick Start](#-quick-start)
+4. [Commands](#-commands)
+5. [Development](#-development)
+   - [Setup](#setup)
+   - [Build](#build)
+   - [Testing](#testing)
+   - [Scripts](#scripts)
+6. [Project Structure](#-project-structure)
+7. [Error Handling](#%EF%B8%8F-error-handling)
+8. [Contributing](#-contributing)
+9. [Support](#-support)
+10. [Authoer](#%EF%B8%8F-author)
+11. [License](#-license)
+
+---
+
+## **🚀 Features**
+
+- **🔐 Environment Management**
+
+  - Load and sync `.env` files across environments.
+  - Secure variable handling with validation.
+  - Pre/post operation hooks.
+
+- **⚙️ Workflow Management**
+
+  - Simulate GitHub Actions workflows locally using `act`.
+  - List available workflows and monitor execution status.
+
+- **🛠️ Developer Tools**
+  - Automated setup with extensible plugin support.
+  - Configurable and reusable CLI hooks.
+
+---
+
+## **⚙️ Configuration**
+
+You can configure `ActorCLI` using a `config.json` file:
+
+```json
+{
+  "environments": ["development", "staging", "production"],
+  "defaultEnv": "development",
+  "hooks": {
+    "pre-sync": "./scripts/pre-sync.js",
+    "post-load": "./scripts/post-load.js"
+  }
+}
+```
+
+### **Environment Options**
+
+- `-e, --env`: Target environment (e.g., `development`, `staging`, `production`).
+- `-f, --force`: Force the operation.
+- `-w, --workflow`: Workflow name to use (for `simulate`).
+- `--format`: Output format for `list` (default: `table`).
+
+---
+
+## **⚡ Quick Start**
+
+1. **Install ActorCLI globally**:
+
+   ```bash
+   npm install -g actorcli
+   ```
+
+2. **Initialize in your project**:
+
+   ```bash
+   cp .env.sample .env
+   sudo nano .env
+   ```
+
+3. **Load environment variables**:
+
+   ```bash
+   actor load -e development
+   ```
+
+4. **List workflows**:
+   ```bash
+   actor list
+   ```
+
+---
+
+## **📜 Commands**
+
+| Command    | Description                                 | Example                    |
+| ---------- | ------------------------------------------- | -------------------------- |
+| `load`     | Load environment variables.                 | `actor load -e production` |
+| `sync`     | Sync environment variables across services. | `actor sync -f`            |
+| `simulate` | Simulate a GitHub Actions workflow locally. | `actor simulate -w build`  |
+| `list`     | Show available workflows.                   | `actor list -f json`       |
+| `help`     | Show help information.                      | `actor help`               |
+
+---
+
+## **🔧 Development**
+
+### **Setup**
+
+```sh
+# Install dependencies
+npm install
+```
+
+### **Build**
+
+```sh
+npm run build
+```
+
+### **Testing**
+
+```sh
+# Run all tests
+npm test
+
+# Run specific suite
+npm test -- workflow
+
+# Generate coverage report
+npm run coverage
+```
+
+### **Scripts**
+
+| Script   | Description             |
+| -------- | ----------------------- |
+| `build`  | Build the project.      |
+| `dev`    | Start development mode. |
+| `test`   | Run tests.              |
+| `lint`   | Lint the codebase.      |
+| `format` | Format the code.        |
+
+---
+
+## **📂 Project Structure**
+
+```plaintext
+actorcli/
+├── src/
+│   ├── commands/       # Command implementations
+│   ├── hooks/          # Custom hooks
+│   └── utils/          # Utility functions
+├── tests/              # Unit and integration tests
+├── docs/               # Documentation
+└── scripts/            # Helper scripts for hooks
+```
+
+---
+
+## **🛠️ Error Handling**
+
+### **Common Issues and Solutions**
+
+- **Invalid Environment**:
+
+  ```plaintext
+  Error: Environment 'test' not found.
+  Solution: Use one of: development, staging, production.
+  ```
+
+- **Sync Failure**:
+
+  ```plaintext
+  Error: Sync failed: Permission denied.
+  Solution: Check GitHub token permissions.
+  ```
+
+- **Workflow Not Found**:
+  ```plaintext
+  Error: Workflow 'deploy' does not exist.
+  Solution: Verify the workflow name in `.github/workflows`.
+  ```
+
+---
+
+## **🤝 Contributing**
+
+We welcome contributions!
+Follow these steps to get started:
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Make your changes and commit them.
+4. Submit a pull request for review.
+
+---
+
+## **📢 Support**
+
+If you encounter any issues or have questions, feel free to:
+
+- Open an issue on GitHub.
+- Start a discussion in the repository.
+- Refer to the official documentation.
+
+### **What's Optimized**
+
+- Added **Table of Contents** for easy navigation.
+- Improved **Quick Start** and command references.
+- Enhanced **Error Handling** and **Development** sections.
+- Refined overall readability and organization.
+
+---
+
+## **🖋️ Author**
+
+#### _Susumu Fujii 👋_
+
+---
+
+## **📜 License**
+
+MIT License
+```
+
+## <a id="--package-json"></a> ./package.json
+```json
+{
+  "name": "@sujii/actorcli",
+  "version": "1.0.7-alpha",
+  "description": "A CLI tool for managing GitHub Actions workflows and environment variables.",
+  "main": "dist/index.js",
+  "bin": {
+    "actor": "dist/index.js"
+  },
+  "scripts": {
+    "build": "yarn setup && tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "vitest",
+    "clean": "rm -rf dist",
+    "prepare": "husky install",
+    "release": "npm version patch && npm run build && npm publish",
+    "setup": "yarn setup:development",
+    "setup:development": "cross-env APP_ENV=\"development\" cp dotenv.development .env",
+    "setup:staging": "cross-env APP_ENV=\"locastagingl\" cp dotenv.staging .env",
+    "setup:production": "cross-env APP_ENV=\"production\" cp dotenv.production .env"
+  },
+  "keywords": [
+    "cli",
+    "github-actions",
+    "env-management",
+    "typescript"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "author": "Susumu Fujii",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^10.0.1",
+    "coverage": "^0.4.1",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.7",
+    "fs-extra": "^11.2.0",
+    "ofetch": "^1.4.1",
+    "readline": "^1.3.0",
+    "ts-node": "^10.9.2",
+    "tsc": "^2.0.4",
+    "typescript": ">=4.3.5 <5.4.0",
+    "vite": "^6.0.7",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.11",
+    "@types/node": "^22.10.5",
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "@typescript-eslint/parser": "^8.19.1",
+    "ajv": "^8.17.1",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^8.10.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "husky": "^8.0.3",
+    "prettier": "^3.4.2",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^2.1.8",
+    "vitest-sonar-reporter": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "packageManager": "yarn@4.5.3",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sujii/actorcli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sujii/actorcli/issues"
+  },
+  "homepage": "https://github.com/sujii/actorcli#readme"
+}
+```
+
+## <a id="--scripts-setup-sh"></a> ./scripts/setup.sh
+```sh
+#!/usr/bin/env bash
+
+# Exit on error, undefined variables, and pipe failures
+set -euo pipefail
+
+# Function for logging with timestamp
+log() {
+    echo "⌁ 🛼 ⌁ [$(date '+%Y-%m-%d %H:%M:%S')] $1"
+}
+
+# Function for error handling with more detailed output
+handle_error() {
+    local line_no=$1
+    local command=$2
+    log "Error occurred at line ${line_no}"
+    log "Failed command: ${command}"
+    exit 1
+}
+
+# Set up error trap with last command
+trap 'handle_error ${LINENO} "${BASH_COMMAND}"' ERR
+
+# Check for required commands
+check_requirements() {
+    local required_commands=("corepack" "yarn" "tree")
+    for cmd in "${required_commands[@]}"; do
+        if ! command -v "$cmd" &> /dev/null; then
+            log "Error: ${cmd} is not installed"
+            exit 1
+        fi
+		done
+}
+
+# Function to handle yarn operations
+setup_yarn() {
+    log "Initializing Yarn"
+    yarn init -2 || return 1
+
+    log "Setting Yarn version"
+    yarn set version stable || return 1
+
+    yarn plugin import interactive-tools
+    yarn plugin import version
+
+    # recover package.json
+    if ! git checkout package.json; then
+        log "Failed to recover package.json"
+        log "Please Fix package.json: $ git checkout package.json"
+        exit 1
+    fi
+
+    log "Setting up dependencies"
+    yarn install || return 1
+}
+
+main() {
+    log "Running: Setup Workspace ⌁ 🧊"
+
+    # Check requirements first
+    check_requirements
+
+    # Enable corepack
+    log "Enabling corepack"
+    corepack enable || {
+        log "Failed to enable corepack"
+        exit 1
+    }
+
+    # Setup yarn and handle potential errors
+    setup_yarn || {
+        log "Failed to setup yarn environment"
+        exit 1
+    }
+
+    # Run tree command with error handling
+    if ! tree -L 3; then
+        log "Failed to display directory structure"
+    fi
+
+    yarn build || {
+        log "Failed to build project"
+        exit 1
+    }
+
+    log "Finished: Setup Workspace ⌁ ⚡️"
+
+    sh alias --add actor "yarn actor"
+
+    log "Type '$ actor --help' to see available commands and options 👋"
+
+    echo
+}
+
+# Run main function
+main
+
+exit 0
+```
+
+## <a id="--scripts-generate-code-markdown-sh"></a> ./scripts/generate_code_markdown.sh
+```sh
+#!/bin/bash
+
+# Output file name
+OUTPUT_FILE="project_code.md"
+# Target file extensions
+EXTENSIONS=("js" "css" "html" "json" "sh" "ts" "yml" "tsx" "md")
+
+# Initialize output file
+{
+    echo "# Project Code Documentation"
+    echo
+    echo "Generated on $(date '+%Y-%m-%dT%H:%M:%S.%6N%z')" # ISO 8601 format
+    echo
+} > "$OUTPUT_FILE"
+
+# Generate Directives Structure
+generate_directives() {
+    echo "## Directives Structure" >> "$OUTPUT_FILE"
+    echo '```' >> "$OUTPUT_FILE"
+    # Use tree command to generate directory structure, excluding node_modules
+    tree -I 'node_modules' --noreport >> "$OUTPUT_FILE"
+    echo '```' >> "$OUTPUT_FILE"
+    echo >> "$OUTPUT_FILE"
+}
+
+# Generate Table of Index
+generate_table_of_index() {
+    echo "## Table of Index" >> "$OUTPUT_FILE"
+    echo >> "$OUTPUT_FILE"
+    # List files matching the target extensions, excluding node_modules
+    find . -type f \( -name "*.js" -o -name "*.css" -o -name "*.html" -o -name "*.json" -o -name "*.sh" -o -name "*.ts" -o -name "*.tsx" -o -name "*.yml" -o -name "*.md" \) ! -path "*/node_modules/*" ! -path "*/.git/*" ! -name "$OUTPUT_FILE" | while IFS= read -r FILE; do
+        FILE_ANCHOR=$(echo "$FILE" | sed -E 's/[^a-zA-Z0-9]/-/g' | tr '[:upper:]' '[:lower:]')
+        echo "- [\`$FILE\`](#$FILE_ANCHOR)" >> "$OUTPUT_FILE"
+    done
+    echo >> "$OUTPUT_FILE"
+}
+
+# Add file content with full path headings
+add_file_contents() {
+    find . -type f \( -name "*.js" -o -name "*.css" -o -name "*.html" -o -name "*.json" -o -name "*.sh" -o -name "*.ts" -o -name "*.tsx" -o -name "*.yml" -o -name "*.md" \) ! -path "*/node_modules/*" ! -path "*/.git/*" ! -name "$OUTPUT_FILE" | while IFS= read -r FILE; do
+        EXT="${FILE##*.}"
+        FILE_ANCHOR=$(echo "$FILE" | sed -E 's/[^a-zA-Z0-9]/-/g' | tr '[:upper:]' '[:lower:]')
+        {
+            echo "## <a id=\"$FILE_ANCHOR\"></a> $FILE" # Include full path with anchor ID
+            echo "\`\`\`$EXT"
+            cat "$FILE"
+            echo "\`\`\`"
+            echo
+        } >> "$OUTPUT_FILE"
+    done
+}
+
+echo "Generating Markdown document with all project code..."
+
+# Add directives structure
+generate_directives
+
+# Add Table of Index
+generate_table_of_index
+
+# Add file content
+add_file_contents
+
+echo "Markdown document generated: $OUTPUT_FILE"
+```
+
+## <a id="---github-workflows-release-yml"></a> ./.github/workflows/release.yml
+```yml
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Corepack with Yarn/Berry
+        run: corepack enable && yarn init -2 && yarn set version stable
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --mode=update-lockfile
+
+      - name: Build Project
+        run: yarn exec tsc --allowUnreachableCode --noCheck --project ./tsconfig.json
+
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+```
+
+## <a id="---github-workflows-manual-run-yml"></a> ./.github/workflows/manual-run.yml
+```yml
+name: Manual Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  berry:
+    name: Setup Yarn/Berry
+    runs-on: ubuntu-latest
+
+  deploy:
+    name: Deploy to ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run:  npm install
+
+      - name: Build Project
+        run: npx tsc
+
+      - name: Deploy
+        run: echo "Deploying to ${{ github.event.inputs.environment }}..."
+```
+
+## <a id="---github-workflows-ci-yml"></a> ./.github/workflows/ci.yml
+```yml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Corepack with Yarn/Berry
+        run: corepack enable && yarn init -2 && yarn set version stable
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --mode=update-lockfile
+
+      - name: Run Lint
+        run: npx eslint .
+
+      - name: Run Tests
+        run: npx vitest &
+
+  build:
+      name: Run Build
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v3
+
+        - name: Setup Corepack with Yarn/Berry
+          run: corepack enable && yarn init -2 && yarn set version stable
+
+        - name: Set up Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: '20'
+            cache: 'yarn'
+
+        - name: Install dependencies
+          run: yarn install --mode=update-lockfile
+
+        - name: Build Project
+          run: yarn exec tsc --allowUnreachableCode --noCheck --project ./tsconfig.json
+
+```
+
+## <a id="---github-dependabot-yml"></a> ./.github/dependabot.yml
+```yml
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for all configuration options:
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  - package-ecosystem: "npm" # See documentation for possible values
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: daily
+      time: '14:00'
+      timezone: 'Asia/Tokyo'
+```
+
+## <a id="--tsconfig-json"></a> ./tsconfig.json
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "outDir": "dist",
+    "rootDir": "src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src", "src/ActorCLI.ts"],
+  "exclude": ["node_modules", "dist", "test"]
+}
+```
+
+## <a id="--eslint-config-js"></a> ./eslint.config.js
+```js
+```
+
+## <a id="---vscode-settings-json"></a> ./.vscode/settings.json
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "files.eol": "\n",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always",
+    "source.fixAll.stylelint": "always",
+    "source.organizeImports": "always"
+  },
+  "css.validate": true,
+  "files.trimTrailingWhitespace": true,
+  "editor.insertSpaces": false,
+  "editor.tabSize": 2,
+  "eslint.validate": ["javascript", "typescript"],
+  "prettier.enable": false,
+  "git.autofetch": true
+}
+```
+
+## <a id="--vitest-config-ts"></a> ./vitest.config.ts
+```ts
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  plugins: [],
+  test: {
+    reporters: ["default", "vitest-sonar-reporter"],
+    outputFile: "report/test-report.xml",
+    globals: true,
+    environment: 'node',
+    coverage: {
+      provider: 'istanbul',
+      reporter: ['text', 'json', 'html'],
+    },
+  },
+});
+```
+
+## <a id="--security-md"></a> ./SECURITY.md
+```md
+# Security Policy
+
+## Supported Versions
+
+Use this section to tell people about which versions of your project are
+currently being supported with security updates.
+
+| Version | Supported          |
+| ------- | ------------------ |
+| 5.1.x   | :white_check_mark: |
+| 5.0.x   | :x:                |
+| 4.0.x   | :white_check_mark: |
+| < 4.0   | :x:                |
+
+## Reporting a Vulnerability
+
+Use this section to tell people how to report a vulnerability.
+
+Tell them where to go, how often they can expect to get an update on a
+reported vulnerability, what to expect if the vulnerability is accepted or
+declined, etc.
+```
+
+## <a id="--src-utils-workflowlister-ts"></a> ./src/utils/workflowLister.ts
+```ts
+import fs from 'fs';
+import path from 'path';
+
+export const listWorkflows = (): string[] => {
+  try {
+    const workflowsDir = path.resolve(process.cwd(), '.github/workflows');
+
+    if (!fs.existsSync(workflowsDir)) {
+      throw new Error(`Workflows directory not found: ${workflowsDir}`);
+    }
+
+    return fs
+      .readdirSync(workflowsDir)
+      .filter((file) => file.endsWith('.yml') || file.endsWith('.yaml'));
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+```
+
+## <a id="--src-utils-actinvoker-ts"></a> ./src/utils/actInvoker.ts
+```ts
+import { spawn, spawnSync } from 'child_process';
+import readline from 'readline';
+import { logError, logInfo } from './logger';
+
+/**
+ * Invokes `act` to simulate a GitHub Actions workflow locally.
+ * @param workflowPath - Path to the workflow file to be executed.
+ * @param options - Additional options for the act command.
+ */
+export const invokeAct = (workflowPath: string, options: string[] = []) => {
+  return new Promise<void>((resolve, reject) => {
+    const args = ['run', '-W', workflowPath, ...options];
+    const actProcess = spawn('act', args, { stdio: 'inherit' });
+
+    actProcess.on('error', (err) => {
+      logError(`Failed to invoke act: ${err.message}`);
+      reject(err);
+    });
+
+    actProcess.on('close', (code) => {
+      if (code === 0) {
+        logInfo('Act completed successfully.');
+        resolve();
+      } else {
+        logError(`Act process exited with code ${code}`);
+        reject(new Error(`Act process exited with code ${code}`));
+      }
+    });
+  });
+};
+
+/**
+ * Checks if `act` is installed on the system.
+ * @returns A boolean indicating whether `act` is installed.
+ */
+export const checkActInstallation = (): boolean => {
+  const result = spawnSync('act', ['--version'], { stdio: 'ignore' });
+  return result.status === 0;
+};
+
+/**
+ * Prompts the user to install `act` if not installed.
+ * @returns A promise resolving to a boolean indicating whether the user wants to install `act`.
+ */
+export const promptInstallAct = (): Promise<boolean> => {
+  return new Promise((resolve) => {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+
+    rl.question(
+      '`act` is not installed. Would you like to install it? (Y/n): ',
+      (answer: string) => {
+        rl.close();
+        resolve(answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes');
+      },
+    );
+  });
+};
+```
+
+## <a id="--src-utils-envvalidator-ts"></a> ./src/utils/envValidator.ts
+```ts
+import Ajv from 'ajv';
+import dotenv from 'dotenv';
+import fs from 'node:fs';
+
+const schema = JSON.parse(fs.readFileSync('./.env.schema.json', 'utf-8'));
+const ajv = new Ajv();
+
+export const validateEnv = (envPath: string) => {
+  const envConfig = dotenv.parse(fs.readFileSync(envPath));
+
+  const validate = ajv.compile(schema);
+  const isValid = validate(envConfig);
+
+  if (!isValid) {
+    console.error('Invalid .env configuration:', validate.errors);
+    process.exit(1);
+  }
+
+  console.log('Environment validated successfully');
+  return envConfig;
+};
+```
+
+## <a id="--src-utils-actinstaller-ts"></a> ./src/utils/actInstaller.ts
+```ts
+import { execSync } from 'child_process';
+import readline from 'readline';
+
+export const checkActInstallation = (): boolean => {
+  try {
+    execSync('act --version', { stdio: 'ignore' });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const promptInstallAct = async (): Promise<boolean> => {
+  return new Promise((resolve) => {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+
+    rl.question(
+      '`act` is not installed. Do you want to install it? [Y/n]: ',
+      (answer: string) => {
+        rl.close();
+        if (answer.toLowerCase() === 'y') {
+          try {
+            console.log('Installing `act`...');
+            const installCommand = process.platform === 'win32' ? 'choco install act' : 'brew install act';
+            execSync(installCommand);
+            resolve(true);
+          } catch (error) {
+            console.error(`Failed to install act: ${error}`);
+            resolve(false);
+          }
+        } else {
+          resolve(false);
+        }
+      },
+    );
+  });
+};
+```
+
+## <a id="--src-utils-logger-ts"></a> ./src/utils/logger.ts
+```ts
+export const logInfo = (message: string) => {
+  console.log(`[INFO]: ${message}`);
+};
+
+export const logError = (message: string) => {
+  console.error(`[ERROR]: ${message}`);
+};
+
+export const logDebug = (message: string) => {
+  if (process.env.DEBUG && process.env.DEBUG === 'true') {
+    console.debug(`[DEBUG]: ${message}`);
+  }
+};
+```
+
+## <a id="--src-utils-envmanager-ts"></a> ./src/utils/envManager.ts
+```ts
+import dotenv from 'dotenv';
+import fs from 'node:fs';
+import { ofetch } from 'ofetch';
+import { logError } from '../utils/logger';
+
+export interface EnvConfig {
+  APP_ENV?: string;
+  APP_NAME?: string;
+  API_KEY?: string;
+  GITHUB_TOKEN?: string;
+}
+
+const defaultEnv = {
+  APP_ENV: 'development',
+  APP_NAME: 'actorCLI',
+  API_KEY: process.env.API_KEY || '',
+  GITHUB_TOKEN: process.env.GITHUB_TOKEN || '',
+} as EnvConfig;
+
+export const loadEnv = async (envPath: string): Promise<void> => {
+  if (!envPath) {
+    throw new Error('Environment file path is required');
+  }
+
+  try {
+    // Validate file exists and is readable
+    await fs.promises.access(envPath, fs.constants.R_OK);
+
+    // Read and parse environment file
+    const envFile = await fs.promises.readFile(envPath, 'utf8');
+    const customEnv = envFile ? dotenv.parse(envFile) : {};
+
+    // Validate custom environment variables
+    if (typeof customEnv !== 'object') {
+      throw new Error('Invalid environment file format');
+    }
+
+    // Merge with default environment, custom values take precedence
+    const mergedEnv: Record<string, string> = {
+      ...defaultEnv,
+      ...Object.fromEntries(
+        Object.entries(customEnv).filter(([, value]) => value != null),
+      ),
+    };
+
+    // Set environment variables
+    Object.entries(mergedEnv).forEach(([key, value]) => {
+      if (value !== undefined) {
+        process.env[key] = String(value);
+      }
+    });
+
+    // // Log success without exposing sensitive values
+    // const safeEnv = Object.fromEntries(
+    //   Object.entries(mergedEnv).map(([key, value]) => [
+    //     key,
+    //     key.match(/key|token|secret|password/i) ? '[REDACTED]' : value
+    //   ])
+    // );
+
+    console.log('Environment variables loaded successfully');
+    // console.debug('Configuration:', safeEnv);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : 'Failed to load environment variables';
+
+    console.error('Environment loading error:', errorMessage);
+    throw new Error(`Failed to load environment: ${errorMessage}`);
+  }
+};
+
+export const syncEnv = async (envPath: string): Promise<void> => {
+  try {
+    const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+    if (!GITHUB_TOKEN) {
+      throw new Error('GITHUB_TOKEN is not set');
+    }
+
+    const envConfig = await fs.promises
+      .readFile(envPath, 'utf8')
+      .then(dotenv.parse);
+
+    const REPO_OWNER = process.env.REPO_OWNER || 'sujii';
+    const REPO_NAME = process.env.REPO_NAME || 'actorcli';
+    const KEY_ID = process.env.ENCRYPTION_KEY_ID;
+
+    if (!KEY_ID) {
+      throw new Error('ENCRYPTION_KEY_ID is not set');
+    }
+
+    const headers = {
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
+      Accept: 'application/vnd.github.v3+json',
+    };
+
+    // Use Promise.all for concurrent requests
+    await Promise.all(
+      Object.entries(envConfig).map(async ([key, value]) => {
+        const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/secrets/${key}`;
+
+        try {
+          await ofetch(apiUrl, {
+            method: 'PUT',
+            body: JSON.stringify({
+              encrypted_value: value,
+              key_id: KEY_ID,
+            }),
+            headers
+          });
+          console.log(`✓ Synchronized secret: ${key}`);
+        } catch (error) {
+          console.error(
+            `✗ Failed to synchronize secret ${key}:`,
+            error instanceof Error ? error.message : 'Unknown error',
+          );
+        }
+      }),
+    );
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred';
+    logError(`Failed to synchronize environment variables: ${errorMessage}`);
+    throw error;
+  }
+};
+```
+
+## <a id="--src-hooks-logenvhook-ts"></a> ./src/hooks/logEnvHook.ts
+```ts
+import { HookFunction } from '../ActorCLI';
+import { logInfo } from '../utils/logger';
+
+/**
+ * Hook function to safely log environment variables while protecting sensitive data
+ */
+export const logEnvHook: HookFunction = (env: Record<string, string>): void => {
+  try {
+    // Create a sanitized copy of environment variables
+    const sanitizedEnv = Object.entries(env).reduce(
+      (acc, [key, value]) => {
+        // Mask sensitive values
+        const isSensitive = /key|token|secret|password|auth|credential/i.test(
+          key,
+        );
+        acc[key] = isSensitive ? '[REDACTED]' : value;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+
+    // Log sanitized environment variables
+    logInfo('Environment variables loaded:');
+
+    // Format and log each variable on a new line for better readability
+    Object.entries(sanitizedEnv)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .forEach(([key, value]) => {
+        console.log(`  ${key}: ${value}`);
+      });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error';
+    console.error('Failed to log environment variables:', errorMessage);
+
+    // Don't throw error to avoid breaking the application flow
+    // since logging is a non-critical operation
+  }
+};
+```
+
+## <a id="--src-hooks-validateenvhook-ts"></a> ./src/hooks/validateEnvHook.ts
+```ts
+import { HookFunction } from '../ActorCLI';
+import { logError, logInfo } from '../utils/logger';
+// Removed incorrect import of Record from 'typescript'
+
+interface EnvValidationRule {
+  key: string;
+  required: boolean;
+  pattern?: RegExp;
+  validate?: (value: string) => boolean;
+}
+
+const ENV_VALIDATION_RULES: EnvValidationRule[] = [
+  {
+    key: 'APP_ENV',
+    required: true,
+    validate: (value) =>
+      ['development', 'staging', 'production'].includes(value),
+  },
+  {
+    key: 'APP_NAME',
+    required: true,
+    pattern: /^[a-zA-Z0-9-_]+$/,
+  },
+  {
+    key: 'API_KEY',
+    required: true,
+    pattern: /^[a-zA-Z0-9-_]+$/,
+  },
+  {
+    key: 'DATABASE_URL',
+    required: true,
+    pattern: /^[a-zA-Z]+:\/\/.+/,
+  },
+  {
+    key: 'GITHUB_TOKEN',
+    required: true,
+    pattern: /^[a-zA-Z0-9-_]+$/,
+  }
+];
+
+/**
+ * Hook function to validate environment variables against predefined rules
+ */
+export const validateEnvHook: HookFunction = (
+  env: Record<string, string>,
+): void => {
+  try {
+    const validationErrors: string[] = [];
+
+    // Validate each environment variable against rules
+    ENV_VALIDATION_RULES.forEach((rule) => {
+      const value = env[rule.key];
+
+      // Check if required variable exists
+      if (rule.required && !value) {
+        validationErrors.push(
+          `Missing required environment variable: ${rule.key}`,
+        );
+        return;
+      }
+
+      if (value) {
+        // Check pattern if defined
+        if (rule.pattern && !rule.pattern.test(value)) {
+          validationErrors.push(
+            `Invalid format for ${rule.key}: Must match pattern ${rule.pattern}`,
+          );
+        }
+
+        // Check custom validation if defined
+        if (rule.validate && !rule.validate(value)) {
+          validationErrors.push(`Invalid value for ${rule.key}: ${value}`);
+        }
+      }
+    });
+
+    // Check for any validation errors
+    if (validationErrors.length > 0) {
+      throw new Error(
+        `Environment validation failed:\n${validationErrors.map((err) => `- ${err}`).join('\n')}`,
+      );
+    }
+
+    logInfo('Environment variables validated successfully');
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error';
+    logError(`Validation error: ${errorMessage}`);
+    throw error;
+  }
+};
+```
+
+## <a id="--src-commands-help-ts"></a> ./src/commands/help.ts
+```ts
+export const handleHelpCommand = () => {
+  console.log(`ActorCLI: Available Commands
+  
+  Usage:
+    actor <command> [options]
+  
+  Commands:
+    load                           Load environment variables.
+    sync                           Synchronize environment variables.
+    simulate                       Simulate GitHub Actions locally using act.
+    list                           List available workflows in .github/workflows.
+    help                           Display this help message.
+  
+  Options:
+    -h, --help                     Show this help message and exit.
+    `);
+};
+```
+
+## <a id="--src-commands-load-ts"></a> ./src/commands/load.ts
+```ts
+import fs from 'fs';
+import path from 'path';
+import readline from 'readline';
+import { loadEnv } from '../utils/envManager';
+import { logError, logInfo } from '../utils/logger';
+
+const VALID_ENVIRONMENTS = ['development', 'staging', 'production'] as const;
+type Environment = (typeof VALID_ENVIRONMENTS)[number];
+
+const promptEnvironment = async (): Promise<Environment> => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  try {
+    const env = await new Promise<string>((resolve) => {
+      rl.question(
+        `Select environment (${VALID_ENVIRONMENTS.join('/')}): `,
+        (answer) => resolve(answer.toLowerCase().trim()),
+      );
+    });
+
+    if (!VALID_ENVIRONMENTS.includes(env as Environment)) {
+      throw new Error(
+        `Invalid environment. Please choose one of: ${VALID_ENVIRONMENTS.join(', ')}`,
+      );
+    }
+
+    return env as Environment;
+  } finally {
+    rl.close();
+  }
+};
+
+interface LoadCommandOptions {
+  env?: string;
+}
+
+export const handleLoadCommand = async (
+  options?: LoadCommandOptions,
+): Promise<void> => {
+  try {
+    // Use provided environment or prompt for one
+    const env = options?.env || (await promptEnvironment());
+
+    const envPath = path.resolve(process.cwd(), `dotenv.${env}`);
+
+    // Check if file exists and is readable
+    try {
+      await fs.promises.access(envPath, fs.constants.R_OK);
+    } catch (error) {
+      throw new Error(`Environment file not found or not readable: ${envPath}`);
+    }
+
+    // Warn if loading production environment
+    if (env === 'production') {
+      logError('Loading production environment - please proceed with caution');
+    }
+
+    logInfo(`Loading environment: ${env}`);
+
+    await loadEnv(envPath);
+    logInfo('Environment loaded successfully');
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred';
+    logError(`Failed to load environment: ${errorMessage}`);
+    throw error;
+  }
+};
+```
+
+## <a id="--src-commands-simulate-ts"></a> ./src/commands/simulate.ts
+```ts
+import readline from 'readline';
+import { checkActInstallation, promptInstallAct } from '../utils/actInstaller';
+import { invokeAct } from '../utils/actInvoker';
+import { logError, logInfo } from '../utils/logger';
+import { listWorkflows } from '../utils/workflowLister';
+
+interface WorkflowSelection {
+  workflow: string;
+  cancelled: boolean;
+}
+
+const promptWorkflow = async (
+  workflows: string[],
+): Promise<WorkflowSelection> => {
+  if (workflows.length === 0) {
+    throw new Error('No workflows available to select');
+  }
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  try {
+    console.log('\nAvailable workflows:');
+    workflows.forEach((workflow, index) => {
+      console.log(`${index + 1}. ${workflow}`);
+    });
+
+    const answer = await new Promise<string>((resolve) => {
+      rl.question(
+        '\nSelect a workflow to simulate (or press Enter to cancel): ',
+        resolve,
+      );
+    });
+
+    if (!answer.trim()) {
+      return { workflow: '', cancelled: true };
+    }
+
+    const index = parseInt(answer, 10) - 1;
+    if (isNaN(index) || index < 0 || index >= workflows.length) {
+      throw new Error(
+        `Invalid selection. Please choose a number between 1 and ${workflows.length}`,
+      );
+    }
+
+    return { workflow: workflows[index], cancelled: false };
+  } finally {
+    rl.close();
+  }
+};
+
+interface SimulateCommandOptions {
+  workflow?: string;
+}
+
+export const handleSimulateCommand = async (
+  options?: SimulateCommandOptions,
+): Promise<void> => {
+  try {
+    // Check act installation
+    if (!(await checkActInstallation())) {
+      const shouldInstall = await promptInstallAct();
+      if (!shouldInstall) {
+        logError(
+          '`act` is required to run simulations. Please install it manually.',
+        );
+        return;
+      }
+    }
+
+    // Get available workflows
+    const workflows = await listWorkflows();
+    if (workflows.length === 0) {
+      logError('No workflows found in .github/workflows directory.');
+      return;
+    }
+
+    // Handle workflow selection
+    let selectedWorkflow: string;
+    if (options?.workflow) {
+      if (!workflows.includes(options.workflow)) {
+        throw new Error(`Workflow "${options.workflow}" not found`);
+      }
+      selectedWorkflow = options.workflow;
+    } else {
+      const selection = await promptWorkflow(workflows);
+      if (selection.cancelled) {
+        logInfo('Simulation cancelled');
+        return;
+      }
+      selectedWorkflow = selection.workflow;
+    }
+
+    // Confirm before running simulation
+    logInfo(`Preparing to simulate workflow: ${selectedWorkflow}`);
+    logError('This will execute the workflow in your local environment');
+
+    try {
+      await invokeAct(selectedWorkflow);
+      logInfo('Workflow simulation completed successfully');
+    } catch (error) {
+      throw new Error(
+        `Workflow simulation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
+    }
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred';
+    logError(`Simulation error: ${errorMessage}`);
+    throw error;
+  }
+};
+```
+
+## <a id="--src-commands-custom-ts"></a> ./src/commands/custom.ts
+```ts
+import { Command } from 'commander';
+import dotenv from 'dotenv';
+import fs from 'node:fs';
+
+const program = new Command();
+
+program
+  .option('--env-file <path>', 'Path to the .env file', './.env') // Defaults
+  .action((options) => {
+    const envPath = options.envFile;
+    if (!fs.existsSync(envPath)) {
+      console.error(`The specified .env file does not exist: ${envPath}`);
+      process.exit(1);
+    }
+    dotenv.config({ path: envPath });
+    console.log(`Loaded environment variables from ${envPath}`);
+  });
+
+program.parse(process.argv);
+```
+
+## <a id="--src-commands-list-ts"></a> ./src/commands/list.ts
+```ts
+import fs from 'fs';
+import path from 'path';
+import { logError, logInfo } from '../utils/logger';
+
+interface ListCommandOptions {
+  format?: 'simple' | 'json' | 'table';
+}
+
+interface WorkflowInfo {
+  name: string;
+  path: string;
+  size: number;
+  lastModified: Date;
+}
+
+export const handleListCommand = async (
+  options: ListCommandOptions = {},
+): Promise<void> => {
+  try {
+    const workflowsDir = path.resolve(process.cwd(), '.github/workflows');
+
+    // Check if workflows directory exists
+    if (!fs.existsSync(workflowsDir)) {
+      throw new Error(`Workflows directory not found: ${workflowsDir}`);
+    }
+
+    // Get workflow files with additional information
+    const workflowFiles = await getWorkflowFiles(workflowsDir);
+
+    if (workflowFiles.length === 0) {
+      logError('No workflow files found in .github/workflows');
+      return;
+    }
+
+    // Display workflows based on format option
+    displayWorkflows(workflowFiles, options.format);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred';
+    logError(`Failed to list workflows: ${errorMessage}`);
+    throw error;
+  }
+};
+
+const getWorkflowFiles = async (directory: string): Promise<WorkflowInfo[]> => {
+  try {
+    const files = await fs.promises.readdir(directory);
+
+    const workflowFiles = files.filter(
+      (file) => file.endsWith('.yml') || file.endsWith('.yaml'),
+    );
+
+    const workflowInfoPromises = workflowFiles.map(async (file) => {
+      const filePath = path.join(directory, file);
+      const stats = await fs.promises.stat(filePath);
+
+      return {
+        name: file,
+        path: filePath,
+        size: stats.size,
+        lastModified: stats.mtime,
+      };
+    });
+
+    return Promise.all(workflowInfoPromises);
+  } catch (error) {
+    throw new Error(
+      `Failed to read workflow files: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    );
+  }
+};
+
+const displayWorkflows = (
+  workflows: WorkflowInfo[],
+  format: ListCommandOptions['format'] = 'simple',
+): void => {
+  switch (format) {
+    case 'json':
+      console.log(JSON.stringify(workflows, null, 2));
+      break;
+
+    case 'table':
+      console.table(
+        workflows.map((wf) => ({
+          Name: wf.name,
+          Size: `${(wf.size / 1024).toFixed(2)} KB`,
+          'Last Modified': wf.lastModified.toLocaleString(),
+        })),
+      );
+      break;
+
+    case 'simple':
+    default:
+      logInfo('Available workflows:');
+      workflows.forEach((wf) => {
+        console.log(`- ${wf.name} (${(wf.size / 1024).toFixed(2)} KB)`);
+      });
+      break;
+  }
+
+  logInfo(`Total workflows found: ${workflows.length}`);
+};
+```
+
+## <a id="--src-commands-sync-ts"></a> ./src/commands/sync.ts
+```ts
+import fs from 'fs';
+import path from 'path';
+import readline from 'readline';
+import { syncEnv } from '../utils/envManager';
+import { logError, logInfo } from '../utils/logger';
+
+const VALID_ENVIRONMENTS = ['development', 'staging', 'production'] as const;
+type Environment = (typeof VALID_ENVIRONMENTS)[number];
+
+const promptEnvironment = async (): Promise<Environment> => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  try {
+    const env = await new Promise<string>((resolve) => {
+      rl.question(
+        `Select environment (${VALID_ENVIRONMENTS.join('/')}): `,
+        (answer) => resolve(answer.toLowerCase().trim()),
+      );
+    });
+
+    if (!VALID_ENVIRONMENTS.includes(env as Environment)) {
+      throw new Error(
+        `Invalid environment. Please choose one of: ${VALID_ENVIRONMENTS.join(', ')}`,
+      );
+    }
+
+    return env as Environment;
+  } finally {
+    rl.close();
+  }
+};
+
+interface SyncCommandOptions {
+  force?: boolean;
+}
+
+export const handleSyncCommand = async (
+  options?: SyncCommandOptions,
+): Promise<void> => {
+  try {
+    const env = await promptEnvironment();
+    const envPath = path.resolve(process.cwd(), `dotenv.${env}`);
+
+    // Check if file exists and is readable
+    try {
+      await fs.promises.access(envPath, fs.constants.R_OK);
+    } catch (error) {
+      throw new Error(`Environment file not found or not readable: ${envPath}`);
+    }
+
+    // Warn if syncing production environment
+    if (env === 'production') {
+      logError('Syncing production environment - please proceed with caution');
+
+      if (!options?.force) {
+        const confirmation = await promptConfirmation(
+          'Are you sure you want to sync production environment? (y/N): ',
+        );
+        if (!confirmation) {
+          logInfo('Sync cancelled');
+          return;
+        }
+      }
+    }
+
+    logInfo(`Synchronizing environment variables for: ${env}`);
+    await syncEnv(env);
+    logInfo('Environment synchronized successfully');
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred';
+    logError(`Failed to sync environment: ${errorMessage}`);
+    throw error;
+  }
+};
+
+const promptConfirmation = async (message: string): Promise<boolean> => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  try {
+    const answer = await new Promise<string>((resolve) => {
+      rl.question(message, (response) =>
+        resolve(response.toLowerCase().trim()),
+      );
+    });
+
+    return answer === 'y' || answer === 'yes';
+  } finally {
+    rl.close();
+  }
+};
+```
+
+## <a id="--src-actorcli-ts"></a> ./src/ActorCLI.ts
+```ts
+import dotenv from 'dotenv';
+import fs from 'node:fs';
+
+export type HookFunction = (env: Record<string, string>) => void | Promise<void>;
+
+export class ActorCLI {
+  private hooks: HookFunction[] = [];
+
+  addHook(hook: HookFunction) {
+    this.hooks.push(hook);
+  }
+
+  async runHooks(env: Record<string, string>) {
+    for (const hook of this.hooks) {
+      await hook(env);
+    }
+  }
+
+  // Sync env
+  async syncEnv(envPath: string) {
+    const envConfig = dotenv.parse(fs.readFileSync(envPath));
+    console.log('Synchronizing environment variables...');
+    await this.runHooks(envConfig);
+  }
+}
+
+// Usages
+const cli = new ActorCLI();
+
+cli.addHook((env) => {
+  console.log('Custom hook: Logging environment variables', env);
+});
+
+cli.syncEnv('./.env');
+```
+
+## <a id="--src-index-ts"></a> ./src/index.ts
+```ts
+#!/usr/bin/env node
+
+import { Command } from 'commander';
+import { ActorCLI } from './ActorCLI';
+import { handleHelpCommand } from './commands/help';
+import { handleListCommand } from './commands/list';
+import { handleLoadCommand } from './commands/load';
+import { handleSimulateCommand } from './commands/simulate';
+import { handleSyncCommand } from './commands/sync';
+import { logEnvHook } from './hooks/logEnvHook';
+import { validateEnvHook } from './hooks/validateEnvHook';
+
+async function main(): Promise<void> {
+  try {
+    const cli = new ActorCLI();
+
+    // Register hooks with error handling
+    [logEnvHook, validateEnvHook].forEach((hook) => {
+      try {
+        cli.addHook(hook);
+      } catch (error) {
+        console.error(
+          `Failed to register hook: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        );
+        process.exit(1);
+      }
+    });
+
+    // Sync environment with error handling
+    try {
+      await cli.syncEnv('./.env');
+    } catch (error) {
+      console.error(
+        'Environment synchronization failed:',
+        error instanceof Error ? error.message : 'Unknown error',
+      );
+      process.exit(1);
+    }
+
+    const program = new Command();
+
+    // CLI Metadata
+    program
+      .name('actor')
+      .description(
+        'A CLI tool for managing GitHub Actions workflows and environment variables.',
+      )
+      .version('1.0.0', '-v, --version')
+      .helpOption('-h, --help', 'Display help information');
+
+    // Register Commands with error handling
+    program
+      .command('load')
+      .description('Load environment variables for a specific environment.')
+      .option(
+        '-e, --env <environment>',
+        'Target environment (development/staging/production)',
+      )
+      .action(async (options) => {
+        try {
+          await handleLoadCommand(options);
+        } catch (error) {
+          console.error(
+            'Load command failed:',
+            error instanceof Error ? error.message : 'Unknown error',
+          );
+          process.exit(1);
+        }
+      });
+
+    program
+      .command('sync')
+      .description(
+        'Synchronize environment variables for a specific environment.',
+      )
+      .option('-f, --force', 'Force synchronization')
+      .action(async (options) => {
+        try {
+          await handleSyncCommand(options);
+        } catch (error) {
+          console.error(
+            'Sync command failed:',
+            error instanceof Error ? error.message : 'Unknown error',
+          );
+          process.exit(1);
+        }
+      });
+
+    program
+      .command('simulate')
+      .description('Simulate a GitHub Actions workflow locally using act.')
+      .option('-w, --workflow <name>', 'Workflow name to simulate')
+      .action(async (options) => {
+        try {
+          await handleSimulateCommand(options);
+        } catch (error) {
+          console.error(
+            'Simulation failed:',
+            error instanceof Error ? error.message : 'Unknown error',
+          );
+          process.exit(1);
+        }
+      });
+
+    program
+      .command('list')
+      .description(
+        'List all available workflows in the .github/workflows directory.',
+      )
+      .option('-f, --format <type>', 'Output format (json/table)', 'table')
+      .action(async (options) => {
+        try {
+          await handleListCommand(options);
+        } catch (error) {
+          console.error(
+            'List command failed:',
+            error instanceof Error ? error.message : 'Unknown error',
+          );
+          process.exit(1);
+        }
+      });
+
+    program
+      .command('help')
+      .description('Show help information for ActorCLI.')
+      .action(handleHelpCommand);
+
+    // Handle unknown commands
+    program.on('command:*', () => {
+      console.error(
+        'Invalid command: %s\nSee --help for a list of available commands.',
+        program.args.join(' '),
+      );
+      process.exit(1);
+    });
+
+    // Parse CLI arguments
+    await program.parseAsync(process.argv);
+  } catch (error) {
+    console.error(
+      'CLI initialization failed:',
+      error instanceof Error ? error.message : 'Unknown error',
+    );
+    process.exit(1);
+  }
+}
+
+// Execute main function
+main().catch((error) => {
+  console.error(
+    'Fatal error:',
+    error instanceof Error ? error.message : 'Unknown error',
+  );
+  process.exit(1);
+});
+```
+
+## <a id="--src-index-d-ts"></a> ./src/index.d.ts
+```ts
+/**
+ * Global type declarations
+ */
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv extends EnvConfig {}
+  }
+}
+
+/**
+ * Environment configuration interface
+ */
+export interface EnvConfig {
+  /** Application name */
+  APP_NAME: string;
+
+  /** Application environment */
+  APP_ENV: 'development' | 'staging' | 'production';
+
+  /** Port number the application runs on */
+  APP_PORT: number; // Changed from string to number for better type safety
+
+  /** GitHub personal access token */
+  GITHUB_TOKEN: string;
+
+  /** Base URL for API endpoints */
+  API_BASE_URL: string;
+
+  /** Database connection string */
+  DATABASE_URL: string;
+
+  /** Redis connection string */
+  REDIS_URL: string;
+
+  /** Application logging level */
+  LOG_LEVEL: 'debug' | 'info' | 'warn' | 'error';
+
+  /** Secret key for JWT token generation/validation */
+  JWT_SECRET: string;
+
+  /** OAuth client ID (optional) */
+  OAUTH_CLIENT_ID?: string;
+
+  /** OAuth client secret (optional) */
+  OAUTH_CLIENT_SECRET?: string;
+
+  /**
+   * @default 'development'
+   */
+  NODE_ENV?: 'development' | 'staging' | 'production';
+}
+```
+
