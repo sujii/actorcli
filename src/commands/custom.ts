@@ -1,11 +1,11 @@
-import { Command } from 'commander';
-import dotenv from 'dotenv';
-import fs from 'node:fs';
+import { Command } from "commander";
+import dotenv from "dotenv";
+import fs from "node:fs";
 
 const program = new Command();
 
 program
-  .option('--env-file <path>', 'Path to the .env file', './.env') // Defaults
+  .option("--env-file <path>", "Path to the .env file", "./.env") // Defaults
   .action((options) => {
     const envPath = options.envFile;
     if (!fs.existsSync(envPath)) {

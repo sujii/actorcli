@@ -1,9 +1,9 @@
-import { execSync } from 'child_process';
-import readline from 'readline';
+import { execSync } from "child_process";
+import readline from "readline";
 
 export const checkActInstallation = (): boolean => {
   try {
-    execSync('act --version', { stdio: 'ignore' });
+    execSync("act --version", { stdio: "ignore" });
     return true;
   } catch {
     return false;
@@ -18,13 +18,16 @@ export const promptInstallAct = async (): Promise<boolean> => {
     });
 
     rl.question(
-      '`act` is not installed. Do you want to install it? [Y/n]: ',
+      "`act` is not installed. Do you want to install it? [Y/n]: ",
       (answer: string) => {
         rl.close();
-        if (answer.toLowerCase() === 'y') {
+        if (answer.toLowerCase() === "y") {
           try {
-            console.log('Installing `act`...');
-            const installCommand = process.platform === 'win32' ? 'choco install act' : 'brew install act';
+            console.log("Installing `act`...");
+            const installCommand =
+              process.platform === "win32"
+                ? "choco install act"
+                : "brew install act";
             execSync(installCommand);
             resolve(true);
           } catch (error) {

@@ -1,5 +1,5 @@
-import { HookFunction } from '../ActorCLI';
-import { logError, logInfo } from '../utils/logger';
+import { HookFunction } from "../ActorCLI";
+import { logError, logInfo } from "../utils/logger";
 // Removed incorrect import of Record from 'typescript'
 
 interface EnvValidationRule {
@@ -11,31 +11,31 @@ interface EnvValidationRule {
 
 const ENV_VALIDATION_RULES: EnvValidationRule[] = [
   {
-    key: 'APP_ENV',
+    key: "APP_ENV",
     required: true,
     validate: (value) =>
-      ['development', 'staging', 'production'].includes(value),
+      ["development", "staging", "production"].includes(value),
   },
   {
-    key: 'APP_NAME',
+    key: "APP_NAME",
     required: true,
     pattern: /^[a-zA-Z0-9-_]+$/,
   },
   {
-    key: 'API_KEY',
+    key: "API_KEY",
     required: true,
     pattern: /^[a-zA-Z0-9-_]+$/,
   },
   {
-    key: 'DATABASE_URL',
+    key: "DATABASE_URL",
     required: true,
     pattern: /^[a-zA-Z]+:\/\/.+/,
   },
   {
-    key: 'GITHUB_TOKEN',
+    key: "GITHUB_TOKEN",
     required: true,
     pattern: /^[a-zA-Z0-9-_]+$/,
-  }
+  },
 ];
 
 /**
@@ -77,14 +77,14 @@ export const validateEnvHook: typeof HookFunction = (
     // Check for any validation errors
     if (validationErrors.length > 0) {
       throw new Error(
-        `Environment validation failed:\n${validationErrors.map((err) => `- ${err}`).join('\n')}`,
+        `Environment validation failed:\n${validationErrors.map((err) => `- ${err}`).join("\n")}`,
       );
     }
 
-    logInfo('Environment variables validated successfully');
+    logInfo("Environment variables validated successfully");
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error';
+      error instanceof Error ? error.message : "Unknown error";
     logError(`Validation error: ${errorMessage}`);
     throw error;
   }
