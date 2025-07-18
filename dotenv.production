@@ -1,4 +1,0 @@
-APP_ENV=production
-APP_NAME=actorCLI
-API_KEY=your_api_key
-DATABASE_URL=postgresql://user:pass@localhost:5432/actorcli

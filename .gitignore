@@ -12,6 +12,8 @@ yarn-debug.log*
 
 # Environment files
 .env
+dotenv.*
+!dotenv.sample
 
 # OS-specific files
 .DS_Store
