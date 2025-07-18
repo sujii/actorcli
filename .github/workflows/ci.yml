@@ -23,8 +23,8 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
-          cache: 'yarn'
+          node-version: "20"
+          cache: "yarn"
 
       - name: Install dependencies
         run: yarn install --mode=update-lockfile
@@ -36,25 +36,24 @@ jobs:
         run: npx vitest &
 
   build:
-      name: Run Build
-      runs-on: ubuntu-latest
+    name: Run Build
+    runs-on: ubuntu-latest
 
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-        - name: Setup Corepack with Yarn/Berry
-          run: corepack enable && yarn init -2 && yarn set version stable
+      - name: Setup Corepack with Yarn/Berry
+        run: corepack enable && yarn init -2 && yarn set version stable
 
-        - name: Set up Node.js
-          uses: actions/setup-node@v3
-          with:
-            node-version: '20'
-            cache: 'yarn'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          cache: "yarn"
 
-        - name: Install dependencies
-          run: yarn install --mode=update-lockfile
+      - name: Install dependencies
+        run: yarn install --mode=update-lockfile
 
-        - name: Build Project
-          run: yarn exec tsc --allowUnreachableCode --noCheck --project ./tsconfig.json
-
+      - name: Build Project
+        run: yarn exec tsc --allowUnreachableCode --noCheck --project ./tsconfig.json

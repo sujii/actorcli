@@ -1,6 +1,6 @@
-import { spawn, spawnSync } from 'child_process';
-import readline from 'readline';
-import { logError, logInfo } from './logger';
+import { spawn, spawnSync } from "child_process";
+import readline from "readline";
+import { logError, logInfo } from "./logger";
 
 /**
  * Invokes `act` to simulate a GitHub Actions workflow locally.
@@ -9,17 +9,17 @@ import { logError, logInfo } from './logger';
  */
 export const invokeAct = (workflowPath: string, options: string[] = []) => {
   return new Promise<void>((resolve, reject) => {
-    const args = ['run', '-W', workflowPath, ...options];
-    const actProcess = spawn('act', args, { stdio: 'inherit' });
+    const args = ["run", "-W", workflowPath, ...options];
+    const actProcess = spawn("act", args, { stdio: "inherit" });
 
-    actProcess.on('error', (err) => {
+    actProcess.on("error", (err) => {
       logError(`Failed to invoke act: ${err.message}`);
       reject(err);
     });
 
-    actProcess.on('close', (code) => {
+    actProcess.on("close", (code) => {
       if (code === 0) {
-        logInfo('Act completed successfully.');
+        logInfo("Act completed successfully.");
         resolve();
       } else {
         logError(`Act process exited with code ${code}`);
@@ -34,7 +34,7 @@ export const invokeAct = (workflowPath: string, options: string[] = []) => {
  * @returns A boolean indicating whether `act` is installed.
  */
 export const checkActInstallation = (): boolean => {
-  const result = spawnSync('act', ['--version'], { stdio: 'ignore' });
+  const result = spawnSync("act", ["--version"], { stdio: "ignore" });
   return result.status === 0;
 };
 
@@ -50,10 +50,10 @@ export const promptInstallAct = (): Promise<boolean> => {
     });
 
     rl.question(
-      '`act` is not installed. Would you like to install it? (Y/n): ',
+      "`act` is not installed. Would you like to install it? (Y/n): ",
       (answer: string) => {
         rl.close();
-        resolve(answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes');
+        resolve(answer.toLowerCase() === "y" || answer.toLowerCase() === "yes");
       },
     );
   });
