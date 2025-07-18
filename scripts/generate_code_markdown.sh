@@ -1,64 +1,109 @@
 #!/bin/bash
 
-# Output file name
-OUTPUT_FILE="project_code.md"
-# Target file extensions
-EXTENSIONS=("js" "css" "html" "json" "sh" "ts" "yml" "tsx" "md")
+set -euo pipefail
 
-# Initialize output file
-{
+OUTPUT_FILE="project_code.md"
+MAX_FILE_SIZE=524288 # 512KB
+
+# Mapping: file extensions → markdown language identifier
+declare -A FILE_LANG_MAP=(
+  [sh]="sh"
+  [js]="javascript"
+  [ts]="typescript"
+  [tsx]="typescriptreact"
+  [html]="html"
+  [json]="json"
+  [yml]="yaml"
+  [md]="markdown"
+  [cjs]="javascript"
+  [mjs]="javascript"
+  [vimrc]="vim"
+  [zshrc]="zsh"
+  [conf]="conf"
+  [toml]="toml"
+  [txt]="text"
+)
+
+# Mapping: filename (no extension) → language
+declare -A FILE_NAME_MAP=(
+  [.bashrc]="bash"
+  [.zshrc]="zsh"
+  [.env]="dotenv"
+  [.gitignore]="gitignore"
+  [Dockerfile]="dockerfile"
+  [Makefile]="makefile"
+)
+
+EXCLUDE_DIRS=("node_modules" ".git" "dev" ".yarn" ".turbo" "dist" "backup" "_vim/doc")
+EXCLUDE_PATHS=("$OUTPUT_FILE" ".pnp.*" "package-lock.json" "yarn.lock" "bun.lockb" "Brewfile.lock.json")
+
+initialize_output() {
+  {
     echo "# Project Code Documentation"
     echo
-    echo "Generated on $(date '+%Y-%m-%dT%H:%M:%S.%6N%z')" # ISO 8601 format
+    echo "Generated on $(date -Iseconds)"
     echo
-} > "$OUTPUT_FILE"
-
-# Generate Directives Structure
-generate_directives() {
-    echo "## Directives Structure" >> "$OUTPUT_FILE"
-    echo '```' >> "$OUTPUT_FILE"
-    # Use tree command to generate directory structure, excluding node_modules
-    tree -I 'node_modules' --noreport >> "$OUTPUT_FILE"
-    echo '```' >> "$OUTPUT_FILE"
-    echo >> "$OUTPUT_FILE"
+    echo "## Table of Contents"
+    echo
+  } > "$OUTPUT_FILE"
 }
 
-# Generate Table of Index
-generate_table_of_index() {
-    echo "## Table of Index" >> "$OUTPUT_FILE"
-    echo >> "$OUTPUT_FILE"
-    # List files matching the target extensions, excluding node_modules
-    find . -type f \( -name "*.js" -o -name "*.css" -o -name "*.html" -o -name "*.json" -o -name "*.sh" -o -name "*.ts" -o -name "*.tsx" -o -name "*.yml" -o -name "*.md" \) ! -path "*/node_modules/*" ! -path "*/.git/*" ! -name "$OUTPUT_FILE" | while IFS= read -r FILE; do
-        FILE_ANCHOR=$(echo "$FILE" | sed -E 's/[^a-zA-Z0-9]/-/g' | tr '[:upper:]' '[:lower:]')
-        echo "- [\`$FILE\`](#$FILE_ANCHOR)" >> "$OUTPUT_FILE"
-    done
-    echo >> "$OUTPUT_FILE"
+get_lang_identifier() {
+  local filename="$1"
+  local base="${filename##*/}"
+  local ext="${filename##*.}"
+
+  if [[ -n "${FILE_NAME_MAP[$base]:-}" ]]; then
+    echo "${FILE_NAME_MAP[$base]}"
+  elif [[ "$ext" == "$base" ]]; then
+    echo "text"
+  elif [[ -n "${FILE_LANG_MAP[$ext]:-}" ]]; then
+    echo "${FILE_LANG_MAP[$ext]}"
+  else
+    echo "text"
+  fi
 }
 
-# Add file content with full path headings
-add_file_contents() {
-    find . -type f \( -name "*.js" -o -name "*.css" -o -name "*.html" -o -name "*.json" -o -name "*.sh" -o -name "*.ts" -o -name "*.tsx" -o -name "*.yml" -o -name "*.md" \) ! -path "*/node_modules/*" ! -path "*/.git/*" ! -name "$OUTPUT_FILE" | while IFS= read -r FILE; do
-        EXT="${FILE##*.}"
-        FILE_ANCHOR=$(echo "$FILE" | sed -E 's/[^a-zA-Z0-9]/-/g' | tr '[:upper:]' '[:lower:]')
-        {
-            echo "## <a id=\"$FILE_ANCHOR\"></a> $FILE" # Include full path with anchor ID
-            echo "\`\`\`$EXT"
-            cat "$FILE"
-            echo "\`\`\`"
-            echo
-        } >> "$OUTPUT_FILE"
-    done
+add_file_contents_and_index() {
+  local find_args=()
+  for ext in "${!FILE_LANG_MAP[@]}"; do
+    find_args+=("-name" "*.$ext" "-o")
+  done
+  find_args+=("-name" ".*rc" "-o" "-name" "Dockerfile" "-o" "-name" "Makefile" "-o")
+  unset 'find_args[${#find_args[@]}-1]'
+
+  local exclude_args=()
+  for dir in "${EXCLUDE_DIRS[@]}"; do
+    exclude_args+=("!" "-path" "*/$dir/*")
+  done
+  for path in "${EXCLUDE_PATHS[@]}"; do
+    exclude_args+=("!" "-name" "$path")
+  done
+
+  find . -type f \( "${find_args[@]}" \) "${exclude_args[@]}" | sort | while IFS= read -r file; do
+    local rel="${file#./}"
+    local anchor=$(echo "$rel" | sed -E 's/[^a-zA-Z0-9_]/-/g' | tr '[:upper:]' '[:lower:]')
+    local size=$(stat -c%s "$file" 2>/dev/null || echo 0)
+    local lang=$(get_lang_identifier "$file")
+
+    echo "- [\`$rel\`](#$anchor)" >> "$OUTPUT_FILE"
+    {
+      echo
+      echo "---"
+      echo "## <a id=\"$anchor\"></a> \`$rel\`"
+      if (( size > MAX_FILE_SIZE )); then
+        echo "*Warning: File size $size exceeds limit ($MAX_FILE_SIZE). Output may be truncated.*"
+      fi
+      echo "\`\`\`$lang"
+      cat "$file"
+      echo "\`\`\`"
+      echo
+    } >> "$OUTPUT_FILE" || echo "⚠️ Failed: $file"
+  done
 }
 
-echo "Generating Markdown document with all project code..."
-
-# Add directives structure
-generate_directives
-
-# Add Table of Index
-generate_table_of_index
-
-# Add file content
-add_file_contents
-
-echo "Markdown document generated: $OUTPUT_FILE"
+# Main
+echo "Exporting project to Markdown..."
+initialize_output
+add_file_contents_and_index
+echo "Done → $OUTPUT_FILE"
