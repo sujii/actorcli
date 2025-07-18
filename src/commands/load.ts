@@ -1,11 +1,11 @@
-import { Command } from 'commander';
-import fs from 'fs';
-import path from 'path';
-import readline from 'readline';
-import { loadEnv } from '../utils/envManager';
-import { logError, logInfo } from '../utils/logger';
+import { Command } from "commander";
+import fs from "fs";
+import path from "path";
+import readline from "readline";
+import { loadEnv } from "../utils/envManager";
+import { logError, logInfo } from "../utils/logger";
 
-const VALID_ENVIRONMENTS = ['development', 'staging', 'production'] as const;
+const VALID_ENVIRONMENTS = ["development", "staging", "production"] as const;
 type Environment = (typeof VALID_ENVIRONMENTS)[number];
 interface LoadCommandOptions {
   env?: string;
@@ -14,12 +14,14 @@ interface LoadCommandOptions {
 const program = new Command();
 
 program
-  .option('-e, --env <environment>', 'Target environment', 'development') // defaultを設定
+  .option("-e, --env <environment>", "Target environment", "development") // defaultを設定
   .action(async (options) => {
-    if (['development', 'staging', 'production'].includes(options.env)) {
+    if (["development", "staging", "production"].includes(options.env)) {
       await handleLoadCommand(options);
     } else {
-      console.error('Invalid environment. Choose from: development, staging, production');
+      console.error(
+        "Invalid environment. Choose from: development, staging, production",
+      );
       process.exit(1);
     }
   });
@@ -35,14 +37,14 @@ const promptEnvironment = async (): Promise<Environment> => {
   try {
     const env = await new Promise<string>((resolve) => {
       rl.question(
-        `Select environment (${VALID_ENVIRONMENTS.join('/')}): `,
+        `Select environment (${VALID_ENVIRONMENTS.join("/")}): `,
         (answer) => resolve(answer.toLowerCase().trim()),
       );
     });
 
     if (!VALID_ENVIRONMENTS.includes(env as Environment)) {
       throw new Error(
-        `Invalid environment. Please choose one of: ${VALID_ENVIRONMENTS.join(', ')}`,
+        `Invalid environment. Please choose one of: ${VALID_ENVIRONMENTS.join(", ")}`,
       );
     }
 
@@ -69,17 +71,17 @@ export const handleLoadCommand = async (
     }
 
     // Warn if loading production environment
-    if (env === 'production') {
-      logError('Loading production environment - please proceed with caution');
+    if (env === "production") {
+      logError("Loading production environment - please proceed with caution");
     }
 
     logInfo(`Loading environment: ${env}`);
 
     await loadEnv(envPath);
-    logInfo('Environment loaded successfully');
+    logInfo("Environment loaded successfully");
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error occurred';
+      error instanceof Error ? error.message : "Unknown error occurred";
     logError(`Failed to load environment: ${errorMessage}`);
     throw error;
   }

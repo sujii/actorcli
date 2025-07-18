@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [],
@@ -6,10 +6,10 @@ export default defineConfig({
     reporters: ["default", "vitest-sonar-reporter"],
     outputFile: "report/test-report.xml",
     globals: true,
-    environment: 'node',
+    environment: "node",
     coverage: {
-      provider: 'istanbul',
-      reporter: ['text', 'json', 'html'],
+      provider: "istanbul",
+      reporter: ["text", "json", "html"],
     },
   },
 });

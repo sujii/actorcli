@@ -1,8 +1,8 @@
-import readline from 'readline';
-import { checkActInstallation, promptInstallAct } from '../utils/actInstaller';
-import { invokeAct } from '../utils/actInvoker';
-import { logError, logInfo } from '../utils/logger';
-import { listWorkflows } from '../utils/workflowLister';
+import readline from "readline";
+import { checkActInstallation, promptInstallAct } from "../utils/actInstaller";
+import { invokeAct } from "../utils/actInvoker";
+import { logError, logInfo } from "../utils/logger";
+import { listWorkflows } from "../utils/workflowLister";
 
 interface WorkflowSelection {
   workflow: string;
@@ -13,7 +13,7 @@ const promptWorkflow = async (
   workflows: string[],
 ): Promise<WorkflowSelection> => {
   if (workflows.length === 0) {
-    throw new Error('No workflows available to select');
+    throw new Error("No workflows available to select");
   }
 
   const rl = readline.createInterface({
@@ -22,20 +22,20 @@ const promptWorkflow = async (
   });
 
   try {
-    console.log('\nAvailable workflows:');
+    console.log("\nAvailable workflows:");
     workflows.forEach((workflow, index) => {
       console.log(`${index + 1}. ${workflow}`);
     });
 
     const answer = await new Promise<string>((resolve) => {
       rl.question(
-        '\nSelect a workflow to simulate (or press Enter to cancel): ',
+        "\nSelect a workflow to simulate (or press Enter to cancel): ",
         resolve,
       );
     });
 
     if (!answer.trim()) {
-      return { workflow: '', cancelled: true };
+      return { workflow: "", cancelled: true };
     }
 
     const index = parseInt(answer, 10) - 1;
@@ -64,7 +64,7 @@ export const handleSimulateCommand = async (
       const shouldInstall = await promptInstallAct();
       if (!shouldInstall) {
         logError(
-          '`act` is required to run simulations. Please install it manually.',
+          "`act` is required to run simulations. Please install it manually.",
         );
         return;
       }
@@ -73,7 +73,7 @@ export const handleSimulateCommand = async (
     // Get available workflows
     const workflows = await listWorkflows();
     if (workflows.length === 0) {
-      logError('No workflows found in .github/workflows directory.');
+      logError("No workflows found in .github/workflows directory.");
       return;
     }
 
@@ -87,7 +87,7 @@ export const handleSimulateCommand = async (
     } else {
       const selection = await promptWorkflow(workflows);
       if (selection.cancelled) {
-        logInfo('Simulation cancelled');
+        logInfo("Simulation cancelled");
         return;
       }
       selectedWorkflow = selection.workflow;
@@ -95,19 +95,19 @@ export const handleSimulateCommand = async (
 
     // Confirm before running simulation
     logInfo(`Preparing to simulate workflow: ${selectedWorkflow}`);
-    logError('This will execute the workflow in your local environment');
+    logError("This will execute the workflow in your local environment");
 
     try {
       await invokeAct(selectedWorkflow);
-      logInfo('Workflow simulation completed successfully');
+      logInfo("Workflow simulation completed successfully");
     } catch (error) {
       throw new Error(
-        `Workflow simulation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Workflow simulation failed: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
     }
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error occurred';
+      error instanceof Error ? error.message : "Unknown error occurred";
     logError(`Simulation error: ${errorMessage}`);
     throw error;
   }

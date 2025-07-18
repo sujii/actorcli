@@ -15,7 +15,7 @@ export interface EnvConfig {
   APP_NAME: string;
 
   /** Application environment */
-  APP_ENV: 'development' | 'staging' | 'production';
+  APP_ENV: "development" | "staging" | "production";
 
   /** Port number the application runs on */
   APP_PORT: number; // Changed from string to number for better type safety
@@ -33,7 +33,7 @@ export interface EnvConfig {
   REDIS_URL: string;
 
   /** Application logging level */
-  LOG_LEVEL: 'debug' | 'info' | 'warn' | 'error';
+  LOG_LEVEL: "debug" | "info" | "warn" | "error";
 
   /** Secret key for JWT token generation/validation */
   JWT_SECRET: string;
@@ -47,5 +47,5 @@ export interface EnvConfig {
   /**
    * @default 'development'
    */
-  NODE_ENV?: 'development' | 'staging' | 'production';
+  NODE_ENV?: "development" | "staging" | "production";
 }

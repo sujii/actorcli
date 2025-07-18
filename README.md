@@ -1,11 +1,15 @@
 #### 　
+
 #### 　
 
 # **ActorCLI**
 
 A CLI tool for managing GitHub Actions workflows and environment variables.<br />
+
 > Associate with [nektos / act](https://github.com/nektos/act) to manipulate the workflows.
+
 #### 　
+
 #### 　
 
 ---
@@ -34,13 +38,11 @@ A CLI tool for managing GitHub Actions workflows and environment variables.<br /
 ## **🚀 Features**
 
 - **🔐 Environment Management**
-
   - Load and sync `.env` files across environments.
   - Secure variable handling with validation.
   - Pre/post operation hooks.
 
 - **⚙️ Workflow Management**
-
   - Simulate GitHub Actions workflows locally using `act`.
   - List available workflows and monitor execution status.
 

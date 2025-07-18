@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-import { Command } from 'commander';
-import { ActorCLI } from './ActorCLI';
-import { handleHelpCommand } from './commands/help';
-import { handleListCommand } from './commands/list';
-import { handleLoadCommand } from './commands/load';
-import { handleSimulateCommand } from './commands/simulate';
-import { handleSyncCommand } from './commands/sync';
-import { logEnvHook } from './hooks/logEnvHook';
-import { validateEnvHook } from './hooks/validateEnvHook';
+import { Command } from "commander";
+import { ActorCLI } from "./ActorCLI";
+import { handleHelpCommand } from "./commands/help";
+import { handleListCommand } from "./commands/list";
+import { handleLoadCommand } from "./commands/load";
+import { handleSimulateCommand } from "./commands/simulate";
+import { handleSyncCommand } from "./commands/sync";
+import { logEnvHook } from "./hooks/logEnvHook";
+import { validateEnvHook } from "./hooks/validateEnvHook";
 
 async function main(): Promise<void> {
   try {
@@ -20,7 +20,7 @@ async function main(): Promise<void> {
         cli.addHook(hook);
       } catch (error) {
         console.error(
-          `Failed to register hook: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          `Failed to register hook: ${error instanceof Error ? error.message : "Unknown error"}`,
         );
         process.exit(1);
       }
@@ -28,11 +28,11 @@ async function main(): Promise<void> {
 
     // Sync environment with error handling
     try {
-      await cli.syncEnv('./.env');
+      await cli.syncEnv("./.env");
     } catch (error) {
       console.error(
-        'Environment synchronization failed:',
-        error instanceof Error ? error.message : 'Unknown error',
+        "Environment synchronization failed:",
+        error instanceof Error ? error.message : "Unknown error",
       );
       process.exit(1);
     }
@@ -41,95 +41,95 @@ async function main(): Promise<void> {
 
     // CLI Metadata
     program
-      .name('actor')
+      .name("actor")
       .description(
-        'A CLI tool for managing GitHub Actions workflows and environment variables.',
+        "A CLI tool for managing GitHub Actions workflows and environment variables.",
       )
-      .version('1.0.0', '-v, --version')
-      .helpOption('-h, --help', 'Display help information');
+      .version("1.0.0", "-v, --version")
+      .helpOption("-h, --help", "Display help information");
 
     // Register Commands with error handling
     program
-      .command('load')
-      .description('Load environment variables for a specific environment.')
+      .command("load")
+      .description("Load environment variables for a specific environment.")
       .option(
-        '-e, --env <environment>',
-        'Target environment (development/staging/production)',
+        "-e, --env <environment>",
+        "Target environment (development/staging/production)",
       )
       .action(async (options) => {
         try {
           await handleLoadCommand(options);
         } catch (error) {
           console.error(
-            'Load command failed:',
-            error instanceof Error ? error.message : 'Unknown error',
+            "Load command failed:",
+            error instanceof Error ? error.message : "Unknown error",
           );
           process.exit(1);
         }
       });
 
     program
-      .command('sync')
+      .command("sync")
       .description(
-        'Synchronize environment variables for a specific environment.',
+        "Synchronize environment variables for a specific environment.",
       )
-      .option('-f, --force', 'Force synchronization')
+      .option("-f, --force", "Force synchronization")
       .action(async (options) => {
         try {
           await handleSyncCommand(options);
         } catch (error) {
           console.error(
-            'Sync command failed:',
-            error instanceof Error ? error.message : 'Unknown error',
+            "Sync command failed:",
+            error instanceof Error ? error.message : "Unknown error",
           );
           process.exit(1);
         }
       });
 
     program
-      .command('simulate')
-      .description('Simulate a GitHub Actions workflow locally using act.')
-      .option('-w, --workflow <name>', 'Workflow name to simulate')
+      .command("simulate")
+      .description("Simulate a GitHub Actions workflow locally using act.")
+      .option("-w, --workflow <name>", "Workflow name to simulate")
       .action(async (options) => {
         try {
           await handleSimulateCommand(options);
         } catch (error) {
           console.error(
-            'Simulation failed:',
-            error instanceof Error ? error.message : 'Unknown error',
+            "Simulation failed:",
+            error instanceof Error ? error.message : "Unknown error",
           );
           process.exit(1);
         }
       });
 
     program
-      .command('list')
+      .command("list")
       .description(
-        'List all available workflows in the .github/workflows directory.',
+        "List all available workflows in the .github/workflows directory.",
       )
-      .option('-f, --format <type>', 'Output format (json/table)', 'table')
+      .option("-f, --format <type>", "Output format (json/table)", "table")
       .action(async (options) => {
         try {
           await handleListCommand(options);
         } catch (error) {
           console.error(
-            'List command failed:',
-            error instanceof Error ? error.message : 'Unknown error',
+            "List command failed:",
+            error instanceof Error ? error.message : "Unknown error",
           );
           process.exit(1);
         }
       });
 
     program
-      .command('help')
-      .description('Show help information for ActorCLI.')
+      .command("help")
+      .description("Show help information for ActorCLI.")
       .action(handleHelpCommand);
 
     // Handle unknown commands
-    program.on('command:*', () => {
+    program.on("command:*", () => {
       console.error(
-        'Invalid command: %s\nSee --help for a list of available commands.',
-        program.args.join(' '),
+        "Invalid command: %s\nSee --help for a list of available commands.",
+        program.args.join(" "),
       );
       process.exit(1);
     });
@@ -138,8 +138,8 @@ async function main(): Promise<void> {
     await program.parseAsync(process.argv);
   } catch (error) {
     console.error(
-      'CLI initialization failed:',
-      error instanceof Error ? error.message : 'Unknown error',
+      "CLI initialization failed:",
+      error instanceof Error ? error.message : "Unknown error",
     );
     process.exit(1);
   }
@@ -148,8 +148,8 @@ async function main(): Promise<void> {
 // Execute main function
 main().catch((error) => {
   console.error(
-    'Fatal error:',
-    error instanceof Error ? error.message : 'Unknown error',
+    "Fatal error:",
+    error instanceof Error ? error.message : "Unknown error",
   );
   process.exit(1);
 });
