@@ -36,7 +36,7 @@
   "license": "MIT",
   "dependencies": {
     "actorcli": "^1.0.2-alpha",
-    "commander": "^13.1.0",
+    "commander": "^14.0.0",
     "coverage": "^0.4.1",
     "cross-env": "^7.0.3",
     "dotenv": "^17.2.1",
