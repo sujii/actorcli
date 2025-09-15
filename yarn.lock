@@ -1299,7 +1299,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^8.37.0"
     actorcli: "npm:^1.0.2-alpha"
     ajv: "npm:^8.17.1"
-    commander: "npm:^13.1.0"
+    commander: "npm:^14.0.1"
     coverage: "npm:^0.4.1"
     cross-env: "npm:^7.0.3"
     dotenv: "npm:^17.2.1"
@@ -1653,10 +1653,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^13.1.0":
-  version: 13.1.0
-  resolution: "commander@npm:13.1.0"
-  checksum: 10c0/7b8c5544bba704fbe84b7cab2e043df8586d5c114a4c5b607f83ae5060708940ed0b5bd5838cf8ce27539cde265c1cbd59ce3c8c6b017ed3eec8943e3a415164
+"commander@npm:^14.0.1":
+  version: 14.0.1
+  resolution: "commander@npm:14.0.1"
+  checksum: 10c0/64439c0651ddd01c1d0f48c8f08e97c18a0a1fa693879451f1203ad01132af2c2aa85da24cf0d8e098ab9e6dc385a756be670d2999a3c628ec745c3ec124587b
   languageName: node
   linkType: hard
 
